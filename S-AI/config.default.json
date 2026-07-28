@@ -110,6 +110,11 @@
       "apiKey": "",
       "baseUrl": "https://api.fireworks.ai",
       "defaultModel": "accounts/fireworks/models/llama-v3p1-70b-instruct"
+    },
+    "bhashini": {
+      "apiKey": "",
+      "userId": "s-ai-user",
+      "pipelineId": ""
     }
   },
   "crawl4ai": {

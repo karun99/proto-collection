@@ -1,7 +1,7 @@
 {
   "name": "@saikarun/s-ai",
-  "version": "5.0.1",
-  "description": "Multi-agent swarm intelligence with neural mapping, digital twin persona adaptation, crawl4ai, MCP, and bias-reduced consensus. 20+ AI providers.",
+  "version": "5.1.0",
+  "description": "Multi-agent swarm intelligence with neural mapping, research mapper (Paperscape-style arXiv visualization), Bhashini multilingual AI, crawl4ai, MCP, and bias-reduced consensus. 20+ AI providers.",
   "type": "module",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
@@ -49,6 +49,18 @@
     "./neural": {
       "types": "./dist/src/neural/index.d.ts",
       "import": "./dist/src/neural/index.js"
+    },
+    "./arxiv": {
+      "types": "./dist/src/tools/arxiv.d.ts",
+      "import": "./dist/src/tools/arxiv.js"
+    },
+    "./bhashini": {
+      "types": "./dist/src/providers/bhashini.d.ts",
+      "import": "./dist/src/providers/bhashini.js"
+    },
+    "./bhashini/tools": {
+      "types": "./dist/src/tools/bhashini-tool.d.ts",
+      "import": "./dist/src/tools/bhashini-tool.js"
     }
   },
   "bin": {
@@ -67,7 +79,7 @@
     "validate": "node node_modules/typescript/bin/tsc --noEmit && echo '✓ TypeScript valid'",
     "pretest": "npm run build && npm run validate",
     "prepack": "node -e \"require('fs').existsSync('dist/src/index.js') || (console.error('Missing dist/ — run build first'), process.exit(1))\"",
-    "postinstall": "node -e \"console.log('  S-AI v5.0.1 installed. Run: s-ai setup')\""
+    "postinstall": "node -e \"console.log('  S-AI v5.1.0 installed. Run: s-ai setup')\""
   },
   "engines": {
     "node": ">=18"
@@ -93,12 +105,23 @@
     "personal-assistant",
     "knowledge-graph",
     "npx",
-    "cli",
     "llm",
     "agent",
     "llm-agents",
     "ai-agents",
-    "multi-perspective"
+    "multi-perspective",
+    "research-mapper",
+    "paperscape",
+    "arxiv",
+    "citation-graph",
+    "force-directed-graph",
+    "bhashini",
+    "multilingual",
+    "indic-languages",
+    "translation",
+    "text-to-speech",
+    "speech-to-text",
+    "indian-languages"
   ],
   "author": "nsk",
   "license": "MIT",

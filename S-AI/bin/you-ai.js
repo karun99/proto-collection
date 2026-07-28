@@ -12,7 +12,7 @@ const PACKAGE_ROOT = join(__dirname, '..');
 
 const HELP = `
   ╔═══════════════════════════════════════════════╗
-  ║  S-AI v5.0 - Multi-Agent Swarm Intelligence  ║
+  ║  S-AI v5.1 - Multi-Agent Swarm Intelligence  ║
   ╚═══════════════════════════════════════════════╝
 
   Usage:
@@ -64,6 +64,16 @@ const HELP = `
     skill install <name>        Install a skill
     skill remove <name>         Remove a skill
 
+  Research Mapper (Paperscape-style):
+    research search <query>     Search arXiv papers
+    research map                Open research mapper dashboard (needs s-ai serve)
+    research graph <id1,id2>    Build citation graph for paper IDs
+
+  Bhashini Multilingual AI:
+    bhashini translate <text>   Translate English to Indian language
+    bhashini status             Check Bhashini API connection
+    bhashini pipelines          List available Bhashini pipelines
+
   AI Engine (Prompt-to-App Builder):
     engine build <prompt>       Build an AI app from a prompt
     engine skill <prompt>       Build a skill from a prompt
@@ -83,6 +93,10 @@ const HELP = `
     s-ai search "latest AI research papers"
     s-ai config set providers.primary openai
     s-ai serve --port 8080
+    s-ai research search "quantum computing transformers"
+    s-ai research graph 2301.12345,2302.67890
+    s-ai bhashini translate "Hello, how are you?" hi
+    s-ai bhashini status
 
   Environment Variables:
     SAI_PRIMARY_PROVIDER        Primary AI provider (default: openrouter)
@@ -104,6 +118,9 @@ const HELP = `
     GROK_API_KEY                xAI Grok API key
     KIMI_API_KEY                Moonshot Kimi API key
     PI_API_KEY                  Inflection Pi API key
+    BHASHINI_API_KEY            Bhashini multilingual AI API key
+    BHASHINI_USER_ID            Bhashini user ID (default: s-ai-user)
+    BHASHINI_PIPELINE_ID        Bhashini pipeline ID
 `;
 
 function parseArgs(args) {
@@ -143,6 +160,8 @@ async function main() {
     case 'provider': await cmdProvider(subcommand, rest); break;
     case 'skill': await cmdSkill(subcommand, rest); break;
     case 'engine': await cmdEngine(subcommand, rest); break;
+    case 'research': await cmdResearch(subcommand, rest); break;
+    case 'bhashini': await cmdBhashini(subcommand, rest); break;
     case 'status': await cmdStatus(); break;
     case 'help': case '--help': case '-h': console.log(HELP); break;
     default: console.error(`Unknown command: ${command}\n\nRun 's-ai help' for usage.`); process.exit(1);
@@ -466,7 +485,7 @@ async function cmdAsk(question, flags) {
 
 async function cmdServe(flags) {
   const port = parseInt(flags.port || process.env.PORT || '3000');
-  console.log(`\n  S-AI Swarm Dashboard v5.0 starting on http://localhost:${port}\n`);
+  console.log(`\n  S-AI Swarm Dashboard v5.1 starting on http://localhost:${port}\n`);
   const { createServer } = await import(join(PACKAGE_ROOT, 'dist', 'src', 'server.js'));
   await createServer({ port, root: PACKAGE_ROOT });
   console.log(`  Dashboard: http://localhost:${port}`);
@@ -758,6 +777,70 @@ async function cmdSkill(sub, rest) {
   }
 }
 
+async function cmdResearch(sub, rest) {
+  if (sub === 'search' || !sub) {
+    const query = rest.join(' ');
+    if (!query) { console.error('Usage: s-ai research search <query>'); process.exit(1); }
+    const { searchArxiv, buildCitationGraph } = await import(join(PACKAGE_ROOT, 'dist', 'src', 'tools', 'arxiv.js'));
+    console.log(`\n  Searching arXiv: "${query}"\n`);
+    const result = await searchArxiv(query, 0, 10);
+    const graph = buildCitationGraph(result.papers);
+    console.log(`  Found ${result.totalResults} papers. Showing ${result.papers.length}:\n`);
+    for (const p of result.papers) {
+      console.log(`  ${p.arxivId}`);
+      console.log(`  ${p.title.slice(0, 80)}`);
+      console.log(`  ${p.authors.slice(0, 2).join(', ')}${p.authors.length > 2 ? ' et al.' : ''} (${p.published.slice(0, 4)})`);
+      console.log(`  ${p.absLink}`);
+      console.log('');
+    }
+    console.log(`  Graph: ${graph.nodes.length} nodes, ${graph.edges.length} edges`);
+    console.log('  Open dashboard for visualization: s-ai research map\n');
+  } else if (sub === 'map' || sub === 'dashboard') {
+    console.log('\n  Research Mapper dashboard available at: http://localhost:3000/research-mapper');
+    console.log('  Start the server with: s-ai serve\n');
+  } else if (sub === 'graph') {
+    const ids = rest.join('').split(',').map(s => s.trim()).filter(Boolean);
+    if (ids.length === 0) { console.error('Usage: s-ai research graph <arxiv-id-1>,<arxiv-id-2>,...'); process.exit(1); }
+    const { fetchPaperDetailsBulk, buildCitationGraph } = await import(join(PACKAGE_ROOT, 'dist', 'src', 'tools', 'arxiv.js'));
+    const papers = await fetchPaperDetailsBulk(ids);
+    const graph = buildCitationGraph(papers);
+    console.log(`\n  Citation Graph: ${graph.nodes.length} nodes, ${graph.edges.length} edges\n`);
+    console.log(JSON.stringify(graph, null, 2));
+  } else {
+    console.log('\n  Research Mapper commands:');
+    console.log('    search <query>       Search arXiv papers');
+    console.log('    map                  Open research mapper dashboard');
+    console.log('    graph <id1,id2,...>  Build citation graph for IDs\n');
+  }
+}
+
+async function cmdBhashini(sub, rest) {
+  const { getBhashiniProvider } = await import(join(PACKAGE_ROOT, 'dist', 'src', 'providers', 'bhashini.js'));
+
+  if (sub === 'translate' || sub === 'tr') {
+    const text = rest[0];
+    const targetLang = rest[1] || 'hi';
+    if (!text) { console.error('Usage: s-ai bhashini translate <text> [target-language]'); process.exit(1); }
+    const bhashini = getBhashiniProvider();
+    const result = await bhashini.translate(text, 'en', targetLang);
+    console.log(`\n  Translation (en -> ${result.targetLanguage}):`);
+    console.log(`  ${result.targetText}\n`);
+  } else if (sub === 'status' || sub === 'check') {
+    const bhashini = getBhashiniProvider();
+    const result = await bhashini.healthCheck();
+    console.log(result.ok ? `  ${result.provider}: OK` : `  ${result.provider}: FAILED - ${result.error}`);
+  } else if (sub === 'pipelines') {
+    const bhashini = getBhashiniProvider();
+    const result = await bhashini.searchPipelines('asr');
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log('\n  Bhashini (Multilingual AI) commands:');
+    console.log('    translate <text> [lang]  Translate English to Indian language');
+    console.log('    status                   Check Bhashini API connection');
+    console.log('    pipelines                List available Bhashini pipelines\n');
+  }
+}
+
 async function cmdEngine(sub, rest) {
   const { AiEngine } = await import(join(PACKAGE_ROOT, 'dist', 'skills', 'ai-engine', 'engine.js'));
   const engine = new AiEngine();
@@ -835,12 +918,13 @@ async function cmdStatus() {
   const skillCount = existsSync(skillsDir) ? readdirSync(skillsDir, { withFileTypes: true }).filter(d => d.isDirectory()).length : 0;
   console.log('\n  S-AI Status');
   console.log('─'.repeat(50));
-  console.log(`  Version:    5.0.0`);
+  console.log(`  Version:    5.1.0`);
   console.log(`  Node:       ${process.version}`);
   console.log(`  Provider:   ${provider.name} (${provider.defaultModel || 'default'})`);
   console.log(`  Graph:      ${graph.getStats().nodes} nodes, ${graph.getStats().edges} edges`);
   console.log(`  Persona:    ${persona ? persona.name + ' (active)' : 'none'}`);
   console.log(`  Skills:     ${skillCount} installed`);
+  console.log(`  Bhashini:   ${process.env.BHASHINI_API_KEY ? 'configured' : 'not configured (set BHASHINI_API_KEY)'}`);
   console.log(`  Config:     ${join(process.env.HOME || '~', '.config', 's-ai')}`);
   console.log('');
 }

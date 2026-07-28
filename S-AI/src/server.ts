@@ -272,6 +272,77 @@ export async function createServer(options: { port?: number; root?: string } = {
     }
   });
 
+  app.get('/research-mapper', (req: Request, res: Response) => {
+    res.sendFile(join(publicDir, 'research-mapper.html'));
+  });
+
+  app.get('/api/research/search', async (req: Request, res: Response) => {
+    try {
+      const { q, max = '25' } = req.query;
+      if (!q) return res.status(400).json({ error: 'query (q) is required' });
+      const { searchArxiv, buildCitationGraph } = await import('./tools/arxiv.js');
+      const result = await searchArxiv(q as string, 0, parseInt(max as string));
+      const graph = buildCitationGraph(result.papers);
+      const categories = [...new Set(result.papers.flatMap(p => p.categories.map((c: string) => c.split('.')[0])))];
+      res.json({ papers: result.papers, graph, categories, total: result.totalResults });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.get('/api/research/graph', async (req: Request, res: Response) => {
+    try {
+      const { ids } = req.query;
+      if (!ids) return res.status(400).json({ error: 'ids (comma-separated arXiv IDs) is required' });
+      const idList = (ids as string).split(',').map(s => s.trim()).filter(Boolean);
+      const { fetchPaperDetailsBulk, buildCitationGraph } = await import('./tools/arxiv.js');
+      const papers = await fetchPaperDetailsBulk(idList);
+      const graph = buildCitationGraph(papers);
+      res.json({ papers, graph });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/bhashini/translate', async (req: Request, res: Response) => {
+    try {
+      const { text, sourceLanguage = 'en', targetLanguage = 'hi' } = req.body;
+      if (!text) return res.status(400).json({ error: 'text is required' });
+      const { getBhashiniProvider } = await import('./providers/bhashini.js');
+      const bhashini = getBhashiniProvider();
+      const result = await bhashini.translate(text, sourceLanguage, targetLanguage);
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/bhashini/tts', async (req: Request, res: Response) => {
+    try {
+      const { text, language = 'hi', gender = 'female' } = req.body;
+      if (!text) return res.status(400).json({ error: 'text is required' });
+      const { getBhashiniProvider } = await import('./providers/bhashini.js');
+      const bhashini = getBhashiniProvider();
+      const result = await bhashini.tts(text, language, gender);
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/bhashini/asr', async (req: Request, res: Response) => {
+    try {
+      const { audioBase64, audioFormat = 'wav', language = 'hi' } = req.body;
+      if (!audioBase64) return res.status(400).json({ error: 'audioBase64 is required' });
+      const { getBhashiniProvider } = await import('./providers/bhashini.js');
+      const bhashini = getBhashiniProvider();
+      const result = await bhashini.asr(audioBase64, audioFormat, language);
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   app.get('/ai-engine', (req: Request, res: Response) => {
     res.sendFile(join(publicDir, 'ai-engine.html'));
   });
@@ -344,7 +415,7 @@ export async function createServer(options: { port?: number; root?: string } = {
     try {
       const graph = await getGraph();
       const stats = graph.getStats();
-      res.json({ version: '5.0.0', uptime: process.uptime(), graph: stats, providers: { hasKey: !!(process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY) }, port });
+      res.json({ version: '5.1.0', uptime: process.uptime(), graph: stats, providers: { hasKey: !!(process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY), bhashini: !!process.env.BHASHINI_API_KEY }, features: { researchMapper: true, bhashini: true }, port });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }

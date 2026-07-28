@@ -1439,7 +1439,7 @@ function getActiveProviderInstance(): BaseProvider {
 }
 
 function listProviders(): string[] {
-  return Object.keys(PROVIDERS);
+  return [...Object.keys(PROVIDERS), 'bhashini'];
 }
 
 export { createProvider, getActiveProviderInstance, listProviders, BaseProvider, PROVIDERS };

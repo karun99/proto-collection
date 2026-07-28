@@ -112,6 +112,26 @@ function createSwarmMcpServer(options: { swarmConfig?: Record<string, unknown> }
     return { contents: [{ uri: 's-ai://graph', text: JSON.stringify(graph.graph, null, 2), mimeType: 'application/json' }] };
   });
 
+  mcp.tool('research_search', 'Search arXiv papers and build a citation graph (Paperscape-style)',
+    { query: z.string().describe('Search query (e.g. "quantum computing", "cat:cs.AI")'), maxResults: z.number().optional().default(10) },
+    async ({ query, maxResults }) => {
+      const { searchArxiv, buildCitationGraph } = await import('../tools/arxiv.js');
+      const result = await searchArxiv(query, 0, maxResults);
+      const graph = buildCitationGraph(result.papers);
+      return { content: [{ type: 'text' as const, text: JSON.stringify({ papers: result.papers.slice(0, 5).map(p => ({ id: p.arxivId, title: p.title, authors: p.authors.slice(0, 3), year: p.published.slice(0, 4), url: p.absLink })), graph: { nodes: graph.nodes.length, edges: graph.edges.length }, total: result.totalResults }, null, 2) }] };
+    }
+  );
+
+  mcp.tool('bhashini_translate', 'Translate text between English and Indian languages using Bhashini API',
+    { text: z.string().describe('Text to translate'), sourceLanguage: z.string().optional().default('en'), targetLanguage: z.string().describe('Target language code (hi, ta, te, bn, mr, gu, etc.)') },
+    async ({ text, sourceLanguage, targetLanguage }) => {
+      const { getBhashiniProvider } = await import('../providers/bhashini.js');
+      const bhashini = getBhashiniProvider();
+      const result = await bhashini.translate(text, sourceLanguage, targetLanguage);
+      return { content: [{ type: 'text' as const, text: JSON.stringify({ translatedText: result.targetText, sourceLanguage: result.sourceLanguage, targetLanguage: result.targetLanguage }, null, 2) }] };
+    }
+  );
+
   mcp.prompt('multi_perspective', 'Ask a question and get multi-perspective analysis',
     { question: z.string().describe('The question') },
     ({ question }) => ({ messages: [{ role: 'user', content: { type: 'text' as const, text: `Analyze this from multiple perspectives with bias reduction: ${question}` } }] })

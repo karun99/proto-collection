@@ -149,6 +149,9 @@ function loadConfig(): SAIConfig {
   if (process.env.FOUNDRY_API_KEY) envProviders.foundry = { ...(envProviders.foundry as Record<string, unknown> || {}), apiKey: process.env.FOUNDRY_API_KEY };
   if (process.env.OPENAI_COMPATIBLE_BASE_URL) envProviders['openai-compatible'] = { baseUrl: process.env.OPENAI_COMPATIBLE_BASE_URL };
   if (process.env.OPENAI_COMPATIBLE_API_KEY) envProviders['openai-compatible'] = { ...(envProviders['openai-compatible'] as Record<string, unknown> || {}), apiKey: process.env.OPENAI_COMPATIBLE_API_KEY };
+  if (process.env.BHASHINI_API_KEY) envProviders.bhashini = { apiKey: process.env.BHASHINI_API_KEY };
+  if (process.env.BHASHINI_USER_ID) envProviders.bhashini = { ...(envProviders.bhashini as Record<string, unknown> || {}), userId: process.env.BHASHINI_USER_ID };
+  if (process.env.BHASHINI_PIPELINE_ID) envProviders.bhashini = { ...(envProviders.bhashini as Record<string, unknown> || {}), pipelineId: process.env.BHASHINI_PIPELINE_ID };
   if (Object.keys(envProviders).length > 0) envConfig.providers = envProviders;
   if (Object.keys(envConfig).length > 0) config = deepMerge(config as Record<string, unknown>, envConfig) as SAIConfig;
 

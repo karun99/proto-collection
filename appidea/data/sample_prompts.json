@@ -1,0 +1,23 @@
+[
+  {
+    "id": "sample-1",
+    "title": "React Component Generator",
+    "category": "Coding",
+    "content": "Act as an expert React developer. Create a functional component that handles [task] using Tailwind CSS and Lucide icons.",
+    "createdAt": 1717660800000
+  },
+  {
+    "id": "sample-2",
+    "title": "Blog Post Outliner",
+    "category": "Writing",
+    "content": "Generate a detailed outline for a blog post about [topic]. Include an introduction, 3-5 main points with subpoints, and a conclusion with a call to action.",
+    "createdAt": 1717660800000
+  },
+  {
+    "id": "sample-3",
+    "title": "SEO Meta Description",
+    "category": "Marketing",
+    "content": "Write a compelling SEO meta description (under 160 characters) for a page about [topic]. Focus on keywords: [keywords].",
+    "createdAt": 1717660800000
+  }
+]

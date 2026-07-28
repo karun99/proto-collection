@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You OS</title>
+    <link rel="stylesheet" href="css/desktop.css">
+</head>
+<body>
+    <div id="desktop">
+        <!-- Desktop icons and windows will be managed here -->
+    </div>
+
+    <div id="taskbar">
+        <button id="start-menu-button">Start</button>
+        <div id="active-apps">
+            <!-- Active app indicators will go here -->
+        </div>
+    </div>
+
+    <div id="start-menu" class="hidden">
+        <div class="start-menu-content">
+            <div class="user-profile">
+                <div class="avatar"></div>
+                <div class="user-info">
+                    <span class="username">Guest User</span>
+                </div>
+            </div>
+            <hr>
+            <ul class="apps-list">
+                <li class="app-item" data-app="explorer">File Explorer</li>
+                <li class="app-item" data-app="terminal">Terminal</li>
+                <li class="app-item" data-app="editor">Text Editor</li>
+            </ul>
+            <hr>
+            <div class="system-actions">
+                <button id="logout-button">Logout</button>
+                <button id="shutdown-button">Shutdown</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/kernel.js"></script>
+</body>
+</html>

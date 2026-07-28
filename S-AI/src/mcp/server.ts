@@ -1,0 +1,129 @@
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
+import { Swarm } from '../swarm/index.js';
+import { getKnowledgeGraph } from '../memory/graph.js';
+import { getCrawlEngine } from '../tools/crawl.js';
+import { getConfig } from '../config.js';
+import { getNeuralMap } from '../neural/index.js';
+
+function createSwarmMcpServer(options: { swarmConfig?: Record<string, unknown> } = {}): McpServer {
+  const mcp = new McpServer({ name: 'S-AI Swarm', version: '5.0.0' });
+  const graph = getKnowledgeGraph();
+  const swarm = new Swarm(options.swarmConfig);
+  const neuralMap = getNeuralMap();
+
+  mcp.tool('swarm_query', 'Query the multi-agent swarm for a bias-reduced, multi-perspective answer',
+    { question: z.string().describe('The question to ask the swarm'), maxRounds: z.number().optional().default(2) },
+    async ({ question, maxRounds }) => {
+      const result = await swarm.run(question, { maxRounds });
+      return { content: [{ type: 'text' as const, text: JSON.stringify({ answer: result.content, consensus: result.consensus, rounds: result.rounds, elapsed: result.elapsed }, null, 2) }] };
+    }
+  );
+
+  mcp.tool('crawl_web', 'Crawl web pages and extract content using crawl4ai',
+    { urls: z.array(z.string()).describe('URLs to crawl'), query: z.string().optional().describe('Search query instead of URLs') },
+    async ({ urls, query }) => {
+      const engine = getCrawlEngine();
+      let results;
+      if (query) {
+        results = await engine.search(query, { maxResults: 3 });
+      } else {
+        results = await engine.crawl(urls);
+      }
+      return { content: [{ type: 'text' as const, text: JSON.stringify(results, null, 2) }] };
+    }
+  );
+
+  mcp.tool('graph_store', 'Store information in the knowledge graph',
+    { type: z.string().describe('Node type'), label: z.string().describe('Node label'), content: z.string().optional().describe('Node content') },
+    async ({ type, label, content }) => {
+      const id = graph.addNode(type, label, { content });
+      return { content: [{ type: 'text' as const, text: `Stored: ${type}/${label} (id: ${id})` }] };
+    }
+  );
+
+  mcp.tool('graph_query', 'Query the knowledge graph',
+    { query: z.string().describe('Search query') },
+    async ({ query }) => {
+      const results = graph.query(query);
+      return { content: [{ type: 'text' as const, text: JSON.stringify(results, null, 2) }] };
+    }
+  );
+
+  mcp.tool('graph_stats', 'Get knowledge graph statistics', {}, async () => {
+    return { content: [{ type: 'text' as const, text: JSON.stringify(graph.getStats(), null, 2) }] };
+  });
+
+  mcp.tool('bias_analysis', 'Analyze text for potential biases',
+    { text: z.string().describe('Text to analyze for bias') },
+    async ({ text }) => {
+      const biases: Array<{ type: string; count: number; examples: string[] }> = [];
+      const patterns = [
+        { name: 'confirmation_bias', regex: /only|always|never|definitely|obviously|clearly/gi },
+        { name: 'cherry_picking', regex: /study shows|research proves|experts say/gi },
+        { name: 'false_equivalence', regex: /same as|just like|no different/gi },
+        { name: 'overgeneralization', regex: /all|every|none|nobody|everybody|always|never/gi },
+        { name: 'emotional_manipulation', regex: /terrifying|disgusting|amazing|incredible|unbelievable/gi }
+      ];
+      for (const p of patterns) {
+        const matches = text.match(p.regex);
+        if (matches) biases.push({ type: p.name, count: matches.length, examples: matches.slice(0, 3) });
+      }
+      return { content: [{ type: 'text' as const, text: JSON.stringify({ biasScore: biases.length / patterns.length, biases, wordCount: text.split(/\s+/).length }, null, 2) }] };
+    }
+  );
+
+  mcp.tool('persona_set', 'Create or update a user persona for neural mapping (Digital Twin adaptation)',
+    { name: z.string().describe('User name'), bio: z.string().optional().describe('User biography/description'), worldview: z.string().optional().describe('User worldview perspective') },
+    async ({ name, bio, worldview }) => {
+      const profile = neuralMap.setProfile({ name, bio: bio || '', worldview: worldview || '' });
+      swarm.setPersonaContext(neuralMap.buildPersonaContext());
+      return { content: [{ type: 'text' as const, text: JSON.stringify({ success: true, profile: { name: profile.name, id: profile.id } }, null, 2) }] };
+    }
+  );
+
+  mcp.tool('persona_get', 'Get the current active persona profile', {}, async () => {
+    const profile = neuralMap.getProfile();
+    if (!profile) return { content: [{ type: 'text' as const, text: 'No active persona. Use persona_set to create one.' }] };
+    return { content: [{ type: 'text' as const, text: JSON.stringify(profile, null, 2) }] };
+  });
+
+  mcp.tool('persona_clear', 'Remove the active persona and deactivate neural mapping', {}, async () => {
+    neuralMap.clearProfile();
+    swarm.setPersonaContext('');
+    return { content: [{ type: 'text' as const, text: 'Persona cleared. Neural mapping deactivated.' }] };
+  });
+
+  mcp.tool('persona_add_node', 'Add a context node (link, text, or file) to the active persona',
+    { type: z.enum(['link', 'text', 'file']).describe('Node type'), title: z.string().describe('Node title'), content: z.string().describe('Node content') },
+    async ({ type, title, content }) => {
+      const node = neuralMap.addContextNode({ type, title, content });
+      swarm.setPersonaContext(neuralMap.buildPersonaContext());
+      return { content: [{ type: 'text' as const, text: JSON.stringify({ success: true, node: { id: node.id, title: node.title, type: node.type } }, null, 2) }] };
+    }
+  );
+
+  mcp.resource('s-ai://swarm/status', 'Swarm Status', 'Current swarm agent statuses', async () => {
+    return { contents: [{ uri: 's-ai://swarm/status', text: JSON.stringify(swarm.getStatus(), null, 2), mimeType: 'application/json' }] };
+  });
+
+  mcp.resource('s-ai://graph', 'Knowledge Graph', 'The full knowledge graph', async () => {
+    return { contents: [{ uri: 's-ai://graph', text: JSON.stringify(graph.graph, null, 2), mimeType: 'application/json' }] };
+  });
+
+  mcp.prompt('multi_perspective', 'Ask a question and get multi-perspective analysis',
+    { question: z.string().describe('The question') },
+    ({ question }) => ({ messages: [{ role: 'user', content: { type: 'text' as const, text: `Analyze this from multiple perspectives with bias reduction: ${question}` } }] })
+  );
+
+  return mcp;
+}
+
+async function startStdioMcp(): Promise<void> {
+  const mcp = createSwarmMcpServer();
+  const transport = new StdioServerTransport();
+  await mcp.connect(transport);
+}
+
+export { createSwarmMcpServer, startStdioMcp };

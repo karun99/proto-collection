@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin Dashboard — Royal Mutton Hub</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐑</text></svg>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a; --card: #111; --card-hover: #1a1a1a;
+  --text: #f1f5f9; --muted: #94a3b8; --border: rgba(255,255,255,0.06);
+  --primary: #d4a017; --primary-dim: rgba(212,160,23,0.12);
+  --success: #22c55e; --danger: #ef4444; --warning: #f59e0b;
+  --radius: 12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+a{color:var(--primary);text-decoration:none}
+input,select,textarea{font-family:inherit}
+
+/* ── Login Screen ── */
+#loginScreen{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);z-index:1000;
+  transition:opacity 0.4s,visibility 0.4s;
+}
+#loginScreen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-box{
+  max-width:380px;width:90%;padding:36px;
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  text-align:center;
+}
+.login-box h1{font-size:1.4rem;color:var(--primary);margin-bottom:4px}
+.login-box p{font-size:0.82rem;color:var(--muted);margin-bottom:24px}
+.login-box label{display:block;text-align:left;font-size:0.82rem;color:var(--muted);margin-bottom:6px}
+.login-box input[type=password]{
+  width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);
+  background:rgba(255,255,255,0.04);color:var(--text);font-size:0.95rem;margin-bottom:16px;
+}
+.login-box input[type=password]:focus{border-color:var(--primary);outline:none}
+.login-box .btn{width:100%;padding:12px;border:none;border-radius:var(--radius);
+  background:var(--primary);color:#0a0a0a;font-size:0.95rem;font-weight:700;cursor:pointer}
+.login-box .btn:hover{background:#c08e10}
+.login-error{color:var(--danger);font-size:0.78rem;margin-top:8px;display:none}
+.login-success{color:var(--success);font-size:0.78rem;margin-top:8px;display:none}
+.login-hint{font-size:0.72rem;color:#475569;margin-top:12px}
+
+/* ── Sidebar ── */
+#sidebar{
+  width:220px;min-height:100vh;background:var(--card);
+  border-right:1px solid var(--border);padding:20px 0;
+  display:flex;flex-direction:column;flex-shrink:0;
+}
+.sidebar-brand{padding:0 16px 20px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.sidebar-brand h2{font-size:1rem;color:var(--primary)}
+.sidebar-brand small{font-size:0.72rem;color:var(--muted)}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  font-size:0.82rem;color:var(--muted);cursor:pointer;transition:all 0.2s;border:none;
+  background:none;width:100%;text-align:left;font-family:inherit;
+}
+.nav-item:hover{background:rgba(255,255,255,0.03);color:var(--text)}
+.nav-item.active{background:var(--primary-dim);color:var(--primary);font-weight:600;border-right:2px solid var(--primary)}
+.nav-item i{width:18px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid var(--border)}
+.sidebar-footer .nav-item{font-size:0.75rem}
+#sessionIndicator{font-size:0.7rem;color:var(--success);display:flex;align-items:center;gap:6px;padding:8px 16px}
+
+/* ── Main Content ── */
+#main{
+  flex:1;padding:28px;overflow-y:auto;max-height:100vh;
+}
+.tab{display:none}
+.tab.active{display:block}
+.tab-header{margin-bottom:24px}
+.tab-header h1{font-size:1.4rem;font-weight:700}
+.tab-header p{font-size:0.85rem;color:var(--muted);margin-top:4px}
+
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card h3{font-size:0.95rem;font-weight:600;margin-bottom:12px;color:var(--primary);display:flex;align-items:center;gap:8px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+
+/* ── Form Elements ── */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:0.78rem;color:var(--muted);margin-bottom:4px;font-weight:500}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;
+  background:rgba(255,255,255,0.04);color:var(--text);font-size:0.85rem;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary);outline:none}
+.form-group textarea{min-height:60px;resize:vertical;font-family:'Consolas','Courier New',monospace;font-size:0.78rem}
+.form-row{display:flex;gap:12px;flex-wrap:wrap}
+.form-row .form-group{flex:1;min-width:180px}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:8px;
+  font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit;
+}
+.btn-primary{background:var(--primary);color:#0a0a0a}
+.btn-primary:hover{background:#c08e10}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#16a34a}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#dc2626}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm{padding:5px 10px;font-size:0.75rem}
+.btn-icon{width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:8px}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:0.8rem}
+th{text-align:left;padding:10px 12px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.empty-state{text-align:center;padding:40px;color:var(--muted);font-size:0.85rem}
+.empty-state i{font-size:2rem;margin-bottom:12px;display:block;color:#333}
+
+/* ── Badges ── */
+.badge{display:inline-block;padding:2px 10px;border-radius:50px;font-size:0.7rem;
+  font-weight:600;background:var(--primary-dim);color:var(--primary);margin:1px}
+.badge-success{background:rgba(34,197,94,0.12);color:var(--success)}
+.badge-danger{background:rgba(239,68,68,0.12);color:var(--danger)}
+.badge-warning{background:rgba(245,158,11,0.12);color:var(--warning)}
+
+/* ── Stats ── */
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+.stat-card .num{font-size:1.8rem;font-weight:800;color:var(--primary)}
+.stat-card .label{font-size:0.78rem;color:var(--muted);margin-top:4px}
+
+/* ── Toast ── */
+.toast{
+  position:fixed;bottom:20px;right:20px;padding:14px 20px;border-radius:var(--radius);
+  background:var(--card);border:1px solid var(--primary);color:var(--text);
+  font-size:0.82rem;z-index:2000;transform:translateY(120px);opacity:0;
+  transition:all 0.4s;max-width:360px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:var(--success)}
+.toast.error{border-color:var(--danger)}
+
+/* ── Toggle ── */
+.toggle{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:#333;border-radius:22px;cursor:pointer;transition:0.3s}
+.toggle .slider::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;background:var(--text);border-radius:50%;transition:0.3s}
+.toggle input:checked+.slider{background:var(--primary)}
+.toggle input:checked+.slider::before{transform:translateX(18px)}
+
+/* ── Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1500;display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;visibility:hidden;transition:all 0.3s}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto}
+.modal-box h2{font-size:1.1rem;margin-bottom:16px;color:var(--primary)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ── Light theme ── */
+body.light{--bg:#f8fafc;--card:#fff;--card-hover:#f1f5f9;--text:#1e293b;--muted:#64748b;--border:rgba(0,0,0,0.08);--primary-dim:rgba(212,160,23,0.08)}
+body.light input,body.light select,body.light textarea{background:rgba(0,0,0,0.02)}
+body.light .stat-card .num{color:#b8940f}
+body.light .stat-card{background:#fff}
+body.light .card{background:#fff}
+body.light #sidebar{background:#fff}
+body.light .login-box{background:#fff}
+body.light .modal-box{background:#fff}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1><i class="fas fa-crown" style="color:var(--primary);"></i> Dashboard</h1>
+    <p>Royal Mutton Hub — Admin Panel</p>
+    <form id="loginForm" autocomplete="off">
+      <label>Admin Password</label>
+      <input type="password" id="loginPassword" placeholder="Enter admin password" required>
+      <button type="submit" class="btn"><i class="fas fa-lock-open"></i> Unlock</button>
+      <div class="login-error" id="loginError">Incorrect password</div>
+      <div class="login-success" id="loginSuccess">Logged in</div>
+    </form>
+    <div class="login-hint">Default: <code>admin123</code> (change in settings)</div>
+    <div style="margin-top:10px"><a href="/" style="font-size:0.78rem;color:#475569;"><i class="fas fa-arrow-left"></i> Back to site</a></div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sidebar-brand">
+    <h2><i class="fas fa-crown" style="color:var(--primary);"></i> Royal Mutton Hub</h2>
+    <small>Admin Dashboard</small>
+  </div>
+  <div id="sessionIndicator"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Encrypted Session</div>
+
+  <button class="nav-item active" data-tab="overview"><i class="fas fa-chart-pie"></i> Overview</button>
+  <button class="nav-item" data-tab="apikeys"><i class="fas fa-key"></i> API Keys</button>
+  <button class="nav-item" data-tab="password"><i class="fas fa-lock"></i> Password</button>
+  <button class="nav-item" data-tab="branding"><i class="fas fa-paint-brush"></i> Branding</button>
+  <button class="nav-item" data-tab="theming"><i class="fas fa-palette"></i> Theming</button>
+  <button class="nav-item" data-tab="recipedb"><i class="fas fa-book-open"></i> RecipeDB</button>
+  <button class="nav-item" data-tab="meetings"><i class="fas fa-calendar-alt"></i> Meetings</button>
+  <button class="nav-item" data-tab="data"><i class="fas fa-database"></i> Data Management</button>
+  <button class="nav-item" data-tab="apiusage"><i class="fas fa-chart-bar"></i> API Usage</button>
+
+  <div class="sidebar-footer">
+    <button class="nav-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Lock</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+
+<!-- Tab: Overview -->
+<div class="tab active" id="tab-overview">
+  <div class="tab-header"><h1><i class="fas fa-chart-pie"></i> Overview</h1><p>Summary of your site data</p></div>
+  <div class="grid-2" id="overviewStats"></div>
+  <div class="card" id="overviewRecent">
+    <h3><i class="fas fa-history"></i> Recent Activity</h3>
+    <div id="overviewActivity" class="empty-state"><i class="fas fa-inbox"></i>No recent activity</div>
+  </div>
+</div>
+
+<!-- Tab: API Keys -->
+<div class="tab" id="tab-apikeys">
+  <div class="tab-header"><h1><i class="fas fa-key"></i> API Keys</h1><p>Manage your OpenRouter API key for the AI chatbot</p></div>
+  <div class="card">
+    <h3><i class="fas fa-robot"></i> AI Chatbot API Key</h3>
+    <div class="form-group">
+      <label>OpenRouter API Key (<a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer">get key</a>)</label>
+      <div class="form-row">
+        <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." style="flex:1;font-family:monospace">
+        <button class="btn btn-primary" onclick="saveApiKey()"><i class="fas fa-save"></i> Save</button>
+        <button class="btn btn-outline" onclick="toggleApiKeyVisibility()"><i class="fas fa-eye"></i> Show</button>
+        <button class="btn btn-outline" onclick="testApiKey()"><i class="fas fa-plug"></i> Test</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <div id="apiKeyStatus" style="font-size:0.82rem;color:var(--muted)"><span class="badge badge-warning">Not configured</span></div>
+    </div>
+    <div class="form-group" style="margin-top:8px">
+      <label>Model</label>
+      <select id="apiModelSelect" style="max-width:300px"></select>
+    </div>
+  </div>
+  <div class="card">
+    <h3><i class="fas fa-shield-alt"></i> API Security</h3>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:8px">Your API key is encrypted using AES-256-GCM and stored in localStorage. It is never sent to any server other than OpenRouter.</p>
+    <button class="btn btn-outline btn-sm" onclick="rotateApiKey()"><i class="fas fa-sync"></i> Rotate Key</button>
+  </div>
+</div>
+
+<!-- Tab: Password -->
+<div class="tab" id="tab-password">
+  <div class="tab-header"><h1><i class="fas fa-lock"></i> Password</h1><p>Change your admin dashboard password</p></div>
+  <div class="card" style="max-width:480px">
+    <h3><i class="fas fa-key"></i> Change Admin Password</h3>
+    <div class="form-group">
+      <label>Current Password</label>
+      <input type="password" id="currentPassword" style="font-family:monospace;width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);font-size:0.85rem;">
+    </div>
+    <div class="form-group">
+      <label>New Password</label>
+      <input type="password" id="newPassword" style="font-family:monospace;width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);font-size:0.85rem;">
+    </div>
+    <div class="form-group">
+      <label>Confirm New Password</label>
+      <input type="password" id="confirmPassword" style="font-family:monospace;width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);font-size:0.85rem;">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-primary" onclick="changePassword()"><i class="fas fa-save"></i> Change Password</button>
+    </div>
+    <div id="passwordMsg" style="margin-top:10px;font-size:0.82rem;"></div>
+  </div>
+  <div class="card" style="max-width:480px">
+    <h3 style="color:var(--muted)"><i class="fas fa-info-circle"></i> About</h3>
+    <p style="font-size:0.82rem;color:var(--muted);line-height:1.6">Your password is hashed using SHA-256 and stored in localStorage (<code>rmh_admin_hash</code>). The hash is never sent over the network. All sensitive data (API keys, branding) is encrypted using AES-256-GCM with your password as the key.</p>
+    <div class="form-group" style="margin-top:12px">
+      <label>Current Password Hash</label>
+      <input type="text" id="currentHashDisplay" readonly style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-size:0.72rem;font-family:monospace;">
+    </div>
+  </div>
+</div>
+
+<!-- Tab: Branding -->
+<div class="tab" id="tab-branding">
+  <div class="tab-header"><h1><i class="fas fa-paint-brush"></i> Branding</h1><p>Customize your business information</p></div>
+  <div class="card">
+    <h3><i class="fas fa-store"></i> Business Info</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Business Name</label><input type="text" id="bizName"></div>
+      <div class="form-group"><label>Tagline</label><input type="text" id="bizTagline"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Telugu Tagline</label><input type="text" id="bizTaglineTel"></div>
+      <div class="form-group"><label>Indigenous Note</label><input type="text" id="bizIndigenousNote"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Address (English)</label><input type="text" id="bizAddr"></div>
+      <div class="form-group"><label>Address (Telugu)</label><input type="text" id="bizAddrTel"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Phone</label><input type="text" id="bizPhone"></div>
+      <div class="form-group"><label>WhatsApp Number</label><input type="text" id="bizWhatsapp"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="bizEmail"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-primary" onclick="saveBranding()"><i class="fas fa-save"></i> Save Branding</button>
+      <button class="btn btn-outline" onclick="resetBranding()"><i class="fas fa-undo"></i> Reset to Default</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3><i class="fas fa-cut"></i> Mutton Cuts</h3>
+    <div id="cutsEditor" style="margin-bottom:8px"></div>
+    <div class="form-row">
+      <input type="text" id="newCutInput" placeholder="Add new cut..." style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text)">
+      <button class="btn btn-success btn-sm" onclick="addCut()"><i class="fas fa-plus"></i> Add</button>
+    </div>
+    <div style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="saveCuts()"><i class="fas fa-save"></i> Save Cuts</button></div>
+  </div>
+  <div class="card">
+    <h3><i class="fas fa-tag"></i> Custom CSS (Advanced)</h3>
+    <div class="form-group">
+      <textarea id="customCssInput" rows="4" placeholder="/* Custom CSS rules */&#10;--primary: #ff6600;&#10;--bg: #000000;"></textarea>
+    </div>
+    <div><button class="btn btn-primary btn-sm" onclick="saveCustomCss()"><i class="fas fa-save"></i> Save CSS</button></div>
+  </div>
+</div>
+
+<!-- Tab: Theming -->
+<div class="tab" id="tab-theming">
+  <div class="tab-header"><h1><i class="fas fa-palette"></i> Theming</h1><p>Customize the look and feel of your site</p></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><i class="fas fa-sun"></i> Mode</h3>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:0.85rem;color:var(--muted)">Dark</span>
+        <label class="toggle"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="slider"></span></label>
+        <span style="font-size:0.85rem;color:var(--muted)">Light</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-palette"></i> Accent Color</h3>
+      <div class="form-row" style="align-items:center">
+        <input type="color" id="accentColor" value="#d4a017" style="width:48px;height:40px;padding:2px;border:1px solid var(--border);border-radius:8px;background:transparent;cursor:pointer">
+        <input type="text" id="accentColorHex" value="#d4a017" style="flex:1;font-family:monospace;padding:8px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text)">
+        <button class="btn btn-primary btn-sm" onclick="saveAccentColor()"><i class="fas fa-check"></i> Apply</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-font"></i> Font</h3>
+      <div class="form-group">
+        <select id="fontSelect" onchange="saveFont()">
+          <option value="'Inter','Segoe UI',sans-serif">Inter (Default)</option>
+          <option value="'Georgia',serif">Georgia</option>
+          <option value="'Courier New',monospace">Monospace</option>
+          <option value="'Segoe UI',sans-serif">Segoe UI</option>
+          <option value="'Playfair Display',serif">Playfair Display</option>
+        </select>
+      </div>
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-border-all"></i> Border Radius</h3>
+      <div class="form-group">
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="range" id="radiusRange" min="0" max="24" value="14" oninput="document.getElementById('radiusVal').textContent=this.value+'px';saveRadius()">
+          <span id="radiusVal" style="font-size:0.82rem;color:var(--muted);min-width:40px">14px</span>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="grid-column:1/-1">
+      <h3><i class="fas fa-save"></i> Theme Presets</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="loadPreset('dark')">🌙 Dark (Default)</button>
+        <button class="btn btn-outline btn-sm" onclick="loadPreset('light')">☀️ Light</button>
+        <button class="btn btn-outline btn-sm" onclick="loadPreset('midnight')">🌃 Midnight Blue</button>
+        <button class="btn btn-outline btn-sm" onclick="loadPreset('warm')">🌅 Warm Earth</button>
+        <button class="btn btn-outline btn-sm" onclick="loadPreset('premium')">💎 Premium Gold</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: RecipeDB -->
+<div class="tab" id="tab-recipedb">
+  <div class="tab-header">
+    <h1><i class="fas fa-book-open"></i> Recipe Database</h1>
+    <p>Manage all recipes — add, edit, delete, or import</p>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn btn-primary" onclick="openRecipeEditor()"><i class="fas fa-plus"></i> New Recipe</button>
+      <button class="btn btn-outline" onclick="exportRecipes()"><i class="fas fa-download"></i> Export JSON</button>
+      <button class="btn btn-outline" onclick="document.getElementById('importRecipesInput').click()"><i class="fas fa-upload"></i> Import</button>
+      <input type="file" id="importRecipesInput" accept=".json" style="display:none" onchange="importRecipes(event)">
+      <button class="btn btn-outline" onclick="batchDeleteRecipes()"><i class="fas fa-trash"></i> Clear User Recipes</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="form-group" style="max-width:300px">
+      <input type="text" id="recipeSearchAdmin" placeholder="Search recipes..." oninput="renderRecipeTable()" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);width:100%">
+    </div>
+    <div class="table-wrap" id="recipeTableWrap"><div class="empty-state"><i class="fas fa-book"></i>Loading recipes...</div></div>
+  </div>
+</div>
+
+<!-- Recipe Editor Modal -->
+<div class="modal-overlay" id="recipeEditorModal">
+  <div class="modal-box" style="max-width:800px">
+    <h2 id="recipeEditorTitle">Edit Recipe</h2>
+    <input type="hidden" id="editRecipeId">
+    <div class="form-row">
+      <div class="form-group"><label>Recipe Name *</label><input type="text" id="editRName"></div>
+      <div class="form-group"><label>Author *</label><input type="text" id="editRAuthor"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label><select id="editRCategory"><option>Biryani</option><option>Curry</option><option>Starter</option><option>Soup</option><option>Kebab</option><option>Dal</option></select></div>
+      <div class="form-group"><label>Cuisine</label><select id="editRCuisine"><option>Andhra</option><option>Hyderabadi</option><option>North Indian</option><option>Mughlai</option><option>Kashmiri</option><option>South Indian</option></select></div>
+      <div class="form-group"><label>Meal Type</label><select id="editRMeal"><option>Lunch/Dinner</option><option>Snacks</option></select></div>
+      <div class="form-group"><label>Diet</label><select id="editRDiet"><option>non-veg</option><option>veg</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Budget</label><select id="editRBudget"><option>low</option><option>medium</option><option>high</option></select></div>
+      <div class="form-group"><label>Cost Estimate</label><input type="text" id="editRCost" placeholder="₹250-350"></div>
+      <div class="form-group"><label>Difficulty</label><select id="editRDiff"><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
+      <div class="form-group"><label>Servings</label><input type="number" id="editRServings" value="4"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Prep Time</label><input type="text" id="editRPrep" placeholder="20 min"></div>
+      <div class="form-group"><label>Cook Time</label><input type="text" id="editRCook" placeholder="45 min"></div>
+      <div class="form-group"><label>Emoji Image</label><input type="text" id="editRImage" placeholder="🍛" maxlength="2"></div>
+    </div>
+    <div class="form-group"><label>Ingredients * (one per line)</label><textarea id="editRIngredients" rows="4"></textarea></div>
+    <div class="form-group"><label>Instructions * (one per line)</label><textarea id="editRSteps" rows="4"></textarea></div>
+    <div class="form-group"><label>Tips</label><textarea id="editRTips" rows="2"></textarea></div>
+    <div class="form-group"><label>Dietary Restrictions (comma-separated: gluten-free, dairy-free, nut-free, egg-free, vegan)</label><input type="text" id="editRRestrictions" placeholder="gluten-free,dairy-free"></div>
+    <div class="form-group"><label>Equipment Needed (comma-separated)</label><input type="text" id="editREquipment" placeholder="Pressure cooker, Pan, Mixing bowl"></div>
+    <div class="form-group" style="display:flex;gap:8px;align-items:center">
+      <label><input type="checkbox" id="editRChefInspired" onchange="document.getElementById('editRChefKey').style.display=this.checked?'block':'none';document.getElementById('editRSourceUrl').style.display=this.checked?'block':'none'"> Chef-credited</label>
+      <select id="editRChefKey" style="display:none;padding:6px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text)">
+        <option value="">Select chef</option>
+        <option value="sanjeevKapoor">Chef Sanjeev Kapoor</option>
+        <option value="ranveerBrar">Chef Ranveer Brar</option>
+        <option value="kunalKapur">Chef Kunal Kapur</option>
+        <option value="tarlaDalal">Tarla Dalal</option>
+        <option value="nishaMadhulika">Nisha Madhulika</option>
+        <option value="vahChef">VahChef (Sanjay Thumma)</option>
+        <option value="hebbar">Hebbar's Kitchen</option>
+        <option value="swasthi">Swasthi's Recipes</option>
+      </select>
+      <input type="url" id="editRSourceUrl" placeholder="Source URL" style="display:none;flex:1;padding:6px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text)">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('recipeEditorModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRecipeFromEditor()"><i class="fas fa-save"></i> Save Recipe</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: Meetings -->
+<div class="tab" id="tab-meetings">
+  <div class="tab-header"><h1><i class="fas fa-calendar-alt"></i> Meetings</h1><p>Manage B2B meeting requests from customers</p></div>
+  <div class="card">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
+      <div style="flex:1;min-width:200px;">
+        <input type="text" id="meetingSearch" placeholder="Search by name, phone, email..." oninput="renderMeetings()" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);font-size:0.85rem;">
+      </div>
+      <select id="meetingFilter" onchange="renderMeetings()" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);font-size:0.85rem;">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <span id="meetingCount" style="font-size:0.82rem;color:var(--muted);"></span>
+    </div>
+    <div class="table-wrap" id="meetingsTableWrap"><div class="empty-state"><i class="fas fa-calendar"></i>No meeting requests yet</div></div>
+  </div>
+</div>
+
+<!-- Tab: Data Management -->
+<div class="tab" id="tab-data">
+  <div class="tab-header"><h1><i class="fas fa-database"></i> Data Management</h1><p>Backup, export, import, and reset your data</p></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><i class="fas fa-download"></i> Export All Data</h3>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px">Export your encrypted admin password, API keys, branding, and all recipes as an encrypted backup file.</p>
+      <div class="form-group"><label>Admin password (to encrypt export)</label><input type="password" id="exportPassword" value="admin123" style="font-family:monospace"></div>
+      <button class="btn btn-primary" onclick="exportAllData()"><i class="fas fa-download"></i> Export Encrypted Backup</button>
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-upload"></i> Import Data</h3>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px">Import data from a previous encrypted backup.</p>
+      <div class="form-group"><label>Admin password (to decrypt)</label><input type="password" id="importPassword" value="admin123" style="font-family:monospace"></div>
+      <div class="form-group"><input type="file" id="importFileInput" accept=".json,.rmhbak" style="font-size:0.82rem"></div>
+      <button class="btn btn-warning" onclick="importAllData()"><i class="fas fa-upload"></i> Import & Restore</button>
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-history"></i> Local Backups</h3>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px">Create a plain JSON snapshot of all dashboard settings.</p>
+      <button class="btn btn-outline" onclick="createLocalBackup()"><i class="fas fa-camera"></i> Snapshot Now</button>
+      <div id="backupList" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--danger)"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px">These actions cannot be undone.</p>
+      <button class="btn btn-danger btn-sm" onclick="clearUserRecipes()"><i class="fas fa-trash"></i> Clear User Recipes</button>
+      <button class="btn btn-danger btn-sm" onclick="resetAnalytics()"><i class="fas fa-chart-line"></i> Reset Analytics</button>
+      <button class="btn btn-danger btn-sm" onclick="factoryReset()"><i class="fas fa-skull-crossbones"></i> Factory Reset All Data</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px;">
+    <h3><i class="fas fa-file-export"></i> Export / Import (CSV & JSON)</h3>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px">Export or import data in open formats. Arrays in CSV are semicolon-separated.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;">
+      <div class="card" style="margin:0;">
+        <h4 style="font-size:0.85rem;color:var(--text);margin-bottom:8px;"><i class="fas fa-utensils"></i> Recipes</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="btn btn-outline btn-sm" onclick="exportRecipesJSON()"><i class="fas fa-download"></i> JSON</button>
+          <button class="btn btn-outline btn-sm" onclick="exportRecipesCSV()"><i class="fas fa-download"></i> CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('importRecipesJSON').click()"><i class="fas fa-upload"></i> JSON</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('importRecipesCSV').click()"><i class="fas fa-upload"></i> CSV</button>
+          <input type="file" id="importRecipesJSON" accept=".json" style="display:none" onchange="importRecipesFromJSON(event)">
+          <input type="file" id="importRecipesCSV" accept=".csv" style="display:none" onchange="importRecipesFromCSV(event)">
+        </div>
+      </div>
+      <div class="card" style="margin:0;">
+        <h4 style="font-size:0.85rem;color:var(--text);margin-bottom:8px;"><i class="fas fa-calendar-alt"></i> Meetings</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="btn btn-outline btn-sm" onclick="exportMeetingsJSON()"><i class="fas fa-download"></i> JSON</button>
+          <button class="btn btn-outline btn-sm" onclick="exportMeetingsCSV()"><i class="fas fa-download"></i> CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('importMeetingsJSON').click()"><i class="fas fa-upload"></i> JSON</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('importMeetingsCSV').click()"><i class="fas fa-upload"></i> CSV</button>
+          <input type="file" id="importMeetingsJSON" accept=".json" style="display:none" onchange="importMeetingsFromJSON(event)">
+          <input type="file" id="importMeetingsCSV" accept=".csv" style="display:none" onchange="importMeetingsFromCSV(event)">
+        </div>
+      </div>
+      <div class="card" style="margin:0;">
+        <h4 style="font-size:0.85rem;color:var(--text);margin-bottom:8px;"><i class="fas fa-phone"></i> Leads</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="btn btn-outline btn-sm" onclick="exportLeadsJSON()"><i class="fas fa-download"></i> JSON</button>
+          <button class="btn btn-outline btn-sm" onclick="exportLeadsCSV()"><i class="fas fa-download"></i> CSV</button>
+        </div>
+      </div>
+      <div class="card" style="margin:0;">
+        <h4 style="font-size:0.85rem;color:var(--text);margin-bottom:8px;"><i class="fas fa-star"></i> Reviews & Ratings</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="btn btn-outline btn-sm" onclick="exportReviewsJSON()"><i class="fas fa-download"></i> JSON</button>
+          <button class="btn btn-outline btn-sm" onclick="exportAppreciationJSON()"><i class="fas fa-download"></i> Ratings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: API Usage -->
+<div class="tab" id="tab-apiusage">
+  <div class="tab-header"><h1><i class="fas fa-chart-bar"></i> API Usage</h1><p>Monitor chatbot API calls, page views, and leads</p></div>
+  <div class="grid-2" id="usageStats"></div>
+  <div class="card">
+    <h3><i class="fas fa-phone"></i> Leads Collected</h3>
+    <div class="table-wrap" id="leadsTableWrap"><div class="empty-state"><i class="fas fa-inbox"></i>No leads yet</div></div>
+  </div>
+  <div class="card">
+    <h3><i class="fas fa-history"></i> Recent API Calls</h3>
+    <div class="table-wrap" id="apiCallsTableWrap"><div class="empty-state"><i class="fas fa-terminal"></i>No API calls recorded</div></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="utils.js"></script>
+<script>
+// ── Anti-bot & copy protection ──
+(function(){
+  document.addEventListener('contextmenu',function(e){e.preventDefault()});
+  document.addEventListener('selectstart',function(e){e.preventDefault()});
+  document.addEventListener('copy',function(e){e.preventDefault()});
+  document.addEventListener('cut',function(e){e.preventDefault()});
+  document.addEventListener('dragstart',function(e){e.preventDefault()});
+  document.addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey){if([67,85,83,80,73,74,89,65,70,69,72].indexOf(e.keyCode)>=0)e.preventDefault()}
+    if(e.keyCode===123)e.preventDefault()
+  });
+  setInterval(function(){
+    var w=window.outerWidth-window.innerWidth,h=window.outerHeight-window.innerHeight;
+    if(w>200||h>200){
+      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0a0a0a;color:#f1f5f9;text-align:center;padding:20px;font-family:sans-serif"><div><h1 style="color:var(--danger);font-size:1.5rem;margin-bottom:10px;">Developer Tools Detected</h1><p style="color:#94a3b8;font-size:0.9rem;">Please close developer tools.</p></div></div>'
+    }
+  },2000);
+})();
+
+/* ── Admin Dashboard ──────────────────────────────── */
+var SESSION = { loggedIn: false, password: '' };
+
+// ── Login ──────────────────────────────────────────────
+var ADMIN_HASH_KEY = 'rmh_admin_hash';
+var DEFAULT_PASS = 'admin123';
+
+function getStoredHash() {
+  var h = localStorage.getItem(ADMIN_HASH_KEY);
+  return h || __RMH.hash(DEFAULT_PASS);
+}
+
+function setPassword(newPass) {
+  localStorage.setItem(ADMIN_HASH_KEY, __RMH.hash(newPass));
+}
+
+function loadPasswordTab() {
+  var h = getStoredHash();
+  document.getElementById('currentHashDisplay').value = h;
+  document.getElementById('passwordMsg').innerHTML = '';
+}
+
+function changePassword() {
+  var current = document.getElementById('currentPassword').value;
+  var newPass = document.getElementById('newPassword').value;
+  var confirm = document.getElementById('confirmPassword').value;
+  var msg = document.getElementById('passwordMsg');
+  if (!current || !newPass || !confirm) { msg.innerHTML = '<span style="color:var(--danger)">Please fill all fields</span>'; return; }
+  if (__RMH.hash(current) !== getStoredHash()) { msg.innerHTML = '<span style="color:var(--danger)">Current password is incorrect</span>'; return; }
+  if (newPass !== confirm) { msg.innerHTML = '<span style="color:var(--danger)">New passwords do not match</span>'; return; }
+  if (newPass.length < 4) { msg.innerHTML = '<span style="color:var(--danger)">Password must be at least 4 characters</span>'; return; }
+  setPassword(newPass);
+  SESSION.password = newPass;
+  document.getElementById('currentPassword').value = '';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('confirmPassword').value = '';
+  msg.innerHTML = '<span style="color:var(--success)">Password changed successfully!</span>';
+  loadPasswordTab();
+  showToast('Password changed', 'success');
+}
+
+function login(password) {
+  var hash = __RMH.hash(password);
+  if (hash === getStoredHash()) {
+    SESSION.loggedIn = true;
+    SESSION.password = password;
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('loginSuccess').style.display = 'block';
+    setTimeout(function() { document.getElementById('loginSuccess').style.display = 'none'; }, 1500);
+    initDashboard();
+    return true;
+  }
+  document.getElementById('loginError').style.display = 'block';
+  return false;
+}
+
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  login(document.getElementById('loginPassword').value);
+});
+
+document.getElementById('logoutBtn').addEventListener('click', function() {
+  SESSION.loggedIn = false;
+  SESSION.password = '';
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginPassword').value = '';
+});
+
+// ── Tab Navigation ────────────────────────────────────
+document.querySelectorAll('.nav-item[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    var tab = document.getElementById('tab-' + btn.getAttribute('data-tab'));
+    if (tab) tab.classList.add('active');
+    // Refresh tab content
+    var tabName = btn.getAttribute('data-tab');
+    if (tabName === 'overview') refreshOverview();
+    if (tabName === 'apikeys') refreshApiKeys();
+    if (tabName === 'password') loadPasswordTab();
+    if (tabName === 'branding') loadBranding();
+    if (tabName === 'theming') loadTheming();
+    if (tabName === 'recipedb') renderRecipeTable();
+    if (tabName === 'meetings') renderMeetings();
+    if (tabName === 'apiusage') refreshUsageStats();
+  });
+});
+
+// ── Toast ──────────────────────────────────────────────
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+// ── Modal ──────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(function(m) {
+  m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('active'); });
+});
+
+// ── Init Dashboard ─────────────────────────────────────
+function initDashboard() {
+  refreshOverview();
+  refreshApiKeys();
+  loadBranding();
+  loadTheming();
+  renderRecipeTable();
+  renderMeetings();
+  refreshUsageStats();
+  loadBackupList();
+}
+
+// ── Dummy page views for analytics ─────────────────────
+function getAnalytics() {
+  try {
+    return __RMH.safeParse(localStorage.getItem('rmh_analytics'), { pageViews: [], apiCalls: [], leads: [] });
+  } catch(e) { return { pageViews: [], apiCalls: [], leads: [] }; }
+}
+
+function saveAnalytics(data) {
+  localStorage.setItem('rmh_analytics', JSON.stringify(data));
+}
+
+// ── OVERVIEW ──────────────────────────────────────────
+function refreshOverview() {
+  var analytics = getAnalytics();
+  var pv = (analytics.pageViews || []).length;
+  var calls = (analytics.apiCalls || []).length;
+  var leads = (analytics.leads || []).length;
+  var recipes = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []).length;
+  var userCount = (analytics.leads || []).length;
+
+  document.getElementById('overviewStats').innerHTML = [
+    '<div class="stat-card"><div class="num">' + pv + '</div><div class="label">Page Views</div></div>',
+    '<div class="stat-card"><div class="num">' + calls + '</div><div class="label">API Calls</div></div>',
+    '<div class="stat-card"><div class="num">' + leads + '</div><div class="label">Leads Captured</div></div>',
+    '<div class="stat-card"><div class="num">' + recipes + '</div><div class="label">User Recipes</div></div>'
+  ].join('');
+
+  // Recent activity
+  var activity = [];
+  (analytics.leads || []).slice(-5).reverse().forEach(function(l) {
+    activity.push('<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.8rem"><span class="badge badge-success" style="background:rgba(34,197,94,0.1)"><i class="fas fa-user-plus"></i> Lead</span> <strong>' + __RMH.escapeHtml(l.name || 'Unknown') + '</strong> — ' + __RMH.escapeHtml(l.source || 'Unknown') + ' <span style="color:var(--muted);font-size:0.72rem">' + new Date(l.date).toLocaleString() + '</span></div>');
+  });
+  (analytics.apiCalls || []).slice(-5).reverse().forEach(function(c) {
+    activity.push('<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.8rem"><span class="badge badge-warning" style="background:rgba(245,158,11,0.1)"><i class="fas fa-robot"></i> API Call</span> <span style="color:var(--muted)">' + __RMH.escapeHtml(c.model || 'openrouter/free') + '</span> <span style="color:var(--muted);font-size:0.72rem">' + new Date(c.date).toLocaleString() + '</span></div>');
+  });
+  document.getElementById('overviewActivity').innerHTML = activity.length > 0 ? activity.join('') : '<div class="empty-state"><i class="fas fa-inbox"></i>No recent activity</div>';
+}
+
+// ── API KEYS ──────────────────────────────────────────
+function refreshApiKeys() {
+  try {
+    var encKey = localStorage.getItem('rmh_admin_apiKey');
+    if (encKey) {
+      __RMH.Crypto.decrypt(SESSION.password, encKey).then(function(dec) {
+        if (dec) {
+          document.getElementById('apiKeyInput').value = dec;
+          document.getElementById('apiKeyStatus').innerHTML = '<span class="badge badge-success">Key is set (encrypted)</span>';
+        } else {
+          document.getElementById('apiKeyStatus').innerHTML = '<span class="badge badge-warning">Cannot decrypt — re-enter key</span>';
+        }
+      }).catch(function() {
+        document.getElementById('apiKeyStatus').innerHTML = '<span class="badge badge-warning">Cannot decrypt — re-enter key</span>';
+      });
+    } else {
+      document.getElementById('apiKeyStatus').innerHTML = '<span class="badge badge-warning">Not configured</span>';
+    }
+  } catch(e) {
+    document.getElementById('apiKeyStatus').innerHTML = '<span class="badge badge-warning">Not configured</span>';
+  }
+
+  // Model select
+  var sel = document.getElementById('apiModelSelect');
+  var models = ['openrouter/free', 'openrouter/openai/free', 'google/gemini-2.5-pro-exp:free', 'anthropic/claude-3.5-haiku:free', 'mistralai/mistral-large:free', 'qwen/qwen-max:free'];
+  var savedModel = localStorage.getItem('rmh_admin_model') || 'openrouter/free';
+  sel.innerHTML = models.map(function(m) { return '<option value="' + m + '"' + (m === savedModel ? ' selected' : '') + '>' + m + '</option>'; }).join('');
+  sel.onchange = function() { localStorage.setItem('rmh_admin_model', this.value); showToast('Model saved', 'success'); };
+}
+
+function saveApiKey() {
+  var key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) { showToast('Please enter an API key', 'error'); return; }
+  if (!key.startsWith('sk-or-')) { showToast('Invalid OpenRouter key format (should start with sk-or-)', 'error'); return; }
+  __RMH.Crypto.encrypt(SESSION.password, key).then(function(enc) {
+    localStorage.setItem('rmh_admin_apiKey', enc);
+    localStorage.setItem('rmh_bot_apikey', key);
+    showToast('API key saved', 'success');
+    document.getElementById('apiKeyStatus').innerHTML = '<span class="badge badge-success">Key is set (encrypted)</span>';
+  }).catch(function() {
+    showToast('Encryption failed', 'error');
+  });
+}
+
+function toggleApiKeyVisibility() {
+  var input = document.getElementById('apiKeyInput');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function testApiKey() {
+  var key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) { showToast('No API key to test', 'error'); return; }
+  showToast('Testing API key...', '');
+  fetch('https://openrouter.ai/api/v1/auth/key', {
+    headers: { 'Authorization': 'Bearer ' + key }
+  }).then(function(r) { return r.json(); }).then(function(data) {
+    if (data && !data.error) {
+      showToast('API key is valid! Credits: ' + (data.credits || 'N/A'), 'success');
+    } else {
+      showToast('API key error: ' + (data.error || 'Unknown'), 'error');
+    }
+  }).catch(function(err) {
+    showToast('Test failed: ' + err.message, 'error');
+  });
+}
+
+function rotateApiKey() {
+  document.getElementById('apiKeyInput').value = '';
+  localStorage.removeItem('rmh_admin_apiKey');
+  localStorage.removeItem('rmh_bot_apikey');
+  document.getElementById('apiKeyStatus').innerHTML = '<span class="badge badge-warning">Key removed</span>';
+  showToast('API key cleared. Enter a new one.', 'success');
+}
+
+// ── BRANDING ──────────────────────────────────────────
+function loadBranding() {
+  var b = __RMH.BUSINESS;
+  var saved = __RMH.safeParse(localStorage.getItem('rmh_admin_branding'), {});
+  document.getElementById('bizName').value = saved.name || b.name;
+  document.getElementById('bizTagline').value = saved.tagline || b.tagline;
+  document.getElementById('bizTaglineTel').value = saved.taglineTelugu || b.taglineTelugu || '';
+  document.getElementById('bizIndigenousNote').value = saved.indigenousNote || b.indigenousNote || '';
+  document.getElementById('bizAddr').value = saved.address || b.address;
+  document.getElementById('bizAddrTel').value = saved.addressTelugu || b.addressTelugu || '';
+  document.getElementById('bizPhone').value = saved.phone || b.phone;
+  document.getElementById('bizWhatsapp').value = saved.whatsapp || b.whatsapp || '';
+  document.getElementById('bizEmail').value = saved.email || b.email || '';
+  renderCutsEditor();
+}
+
+function saveBranding() {
+  var saved = {
+    name: document.getElementById('bizName').value.trim(),
+    tagline: document.getElementById('bizTagline').value.trim(),
+    taglineTelugu: document.getElementById('bizTaglineTel').value.trim(),
+    indigenousNote: document.getElementById('bizIndigenousNote').value.trim(),
+    address: document.getElementById('bizAddr').value.trim(),
+    addressTelugu: document.getElementById('bizAddrTel').value.trim(),
+    phone: document.getElementById('bizPhone').value.trim(),
+    whatsapp: document.getElementById('bizWhatsapp').value.trim(),
+    email: document.getElementById('bizEmail').value.trim()
+  };
+  localStorage.setItem('rmh_admin_branding', JSON.stringify(saved));
+  showToast('Branding saved! Reload site to see changes.', 'success');
+}
+
+function resetBranding() {
+  if (!confirm('Reset branding to defaults?')) return;
+  localStorage.removeItem('rmh_admin_branding');
+  loadBranding();
+  showToast('Branding reset to defaults', 'success');
+}
+
+// ── Cuts Editor ───────────────────────────────────────
+function renderCutsEditor() {
+  var savedCuts = __RMH.safeParse(localStorage.getItem('rmh_admin_cuts'), null);
+  var cuts = savedCuts || __RMH.BUSINESS.cuts || [];
+  var el = document.getElementById('cutsEditor');
+  el.innerHTML = cuts.map(function(c, i) {
+    return '<div style="display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">' +
+      '<span style="flex:1;font-size:0.82rem">' + __RMH.escapeHtml(c) + '</span>' +
+      '<button class="btn btn-danger btn-sm btn-icon" onclick="removeCut(' + i + ')"><i class="fas fa-times"></i></button></div>';
+  }).join('');
+  if (cuts.length === 0) el.innerHTML = '<div style="font-size:0.82rem;color:var(--muted);padding:8px;">No cuts defined</div>';
+}
+
+var tempCuts = [];
+
+function addCut() {
+  var input = document.getElementById('newCutInput');
+  var val = input.value.trim();
+  if (!val) return;
+  var savedCuts = __RMH.safeParse(localStorage.getItem('rmh_admin_cuts'), null);
+  var cuts = savedCuts ? savedCuts.slice() : (__RMH.BUSINESS.cuts || []).slice();
+  cuts.push(val);
+  localStorage.setItem('rmh_admin_cuts', JSON.stringify(cuts));
+  input.value = '';
+  renderCutsEditor();
+  showToast('Cut added', 'success');
+}
+
+function removeCut(index) {
+  var savedCuts = __RMH.safeParse(localStorage.getItem('rmh_admin_cuts'), null);
+  var cuts = savedCuts ? savedCuts.slice() : (__RMH.BUSINESS.cuts || []).slice();
+  cuts.splice(index, 1);
+  localStorage.setItem('rmh_admin_cuts', JSON.stringify(cuts));
+  renderCutsEditor();
+}
+
+function saveCuts() {
+  showToast('Cuts saved', 'success');
+}
+
+// ── Custom CSS ─────────────────────────────────────────
+function saveCustomCss() {
+  var css = document.getElementById('customCssInput').value.trim();
+  if (css) {
+    localStorage.setItem('rmh_admin_customCss', css);
+    showToast('Custom CSS saved (applies on reload)', 'success');
+  } else {
+    localStorage.removeItem('rmh_admin_customCss');
+    showToast('Custom CSS cleared', 'success');
+  }
+}
+
+// ── THEMING ───────────────────────────────────────────
+function loadTheming() {
+  var theme = __RMH.safeParse(localStorage.getItem('rmh_admin_theme'), { mode: 'dark', accent: '#d4a017', font: "'Inter','Segoe UI',sans-serif", radius: 14 });
+  document.getElementById('themeToggle').checked = theme.mode === 'light';
+  document.getElementById('accentColor').value = theme.accent || '#d4a017';
+  document.getElementById('accentColorHex').value = theme.accent || '#d4a017';
+  document.getElementById('fontSelect').value = theme.font || "'Inter','Segoe UI',sans-serif";
+  document.getElementById('radiusRange').value = theme.radius || 14;
+  document.getElementById('radiusVal').textContent = (theme.radius || 14) + 'px';
+  applyTheme(theme);
+}
+
+function applyTheme(theme) {
+  if (theme.mode === 'light') { document.body.classList.add('light'); } else { document.body.classList.remove('light'); }
+  if (theme.accent) {
+    document.documentElement.style.setProperty('--primary', theme.accent);
+    document.querySelectorAll('.nav-item.active').forEach(function(el) { el.style.color = theme.accent; });
+  }
+}
+
+function saveThemeSettings(theme) {
+  localStorage.setItem('rmh_admin_theme', JSON.stringify(theme));
+  applyTheme(theme);
+}
+
+function toggleTheme() {
+  var theme = __RMH.safeParse(localStorage.getItem('rmh_admin_theme'), { mode: 'dark', accent: '#d4a017', font: "'Inter','Segoe UI',sans-serif", radius: 14 });
+  theme.mode = document.getElementById('themeToggle').checked ? 'light' : 'dark';
+  saveThemeSettings(theme);
+}
+
+function saveAccentColor() {
+  var hex = document.getElementById('accentColorHex').value.trim();
+  var theme = __RMH.safeParse(localStorage.getItem('rmh_admin_theme'), { mode: 'dark', accent: '#d4a017', font: "'Inter','Segoe UI',sans-serif", radius: 14 });
+  theme.accent = hex;
+  document.getElementById('accentColor').value = hex;
+  saveThemeSettings(theme);
+  showToast('Accent color updated', 'success');
+}
+
+document.getElementById('accentColor').addEventListener('input', function() {
+  document.getElementById('accentColorHex').value = this.value;
+});
+
+document.getElementById('accentColorHex').addEventListener('change', function() {
+  var v = this.value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+    document.getElementById('accentColor').value = v;
+    saveAccentColor();
+  }
+});
+
+function saveFont() {
+  var theme = __RMH.safeParse(localStorage.getItem('rmh_admin_theme'), { mode: 'dark', accent: '#d4a017', font: "'Inter','Segoe UI',sans-serif", radius: 14 });
+  theme.font = document.getElementById('fontSelect').value;
+  saveThemeSettings(theme);
+  document.body.style.fontFamily = theme.font;
+  showToast('Font updated', 'success');
+}
+
+function saveRadius() {
+  var theme = __RMH.safeParse(localStorage.getItem('rmh_admin_theme'), { mode: 'dark', accent: '#d4a017', font: "'Inter','Segoe UI',sans-serif", radius: 14 });
+  theme.radius = parseInt(document.getElementById('radiusRange').value);
+  saveThemeSettings(theme);
+  document.documentElement.style.setProperty('--radius', theme.radius + 'px');
+}
+
+function loadPreset(name) {
+  var presets = {
+    dark: { mode: 'dark', accent: '#d4a017', font: "'Inter','Segoe UI',sans-serif", radius: 14 },
+    light: { mode: 'light', accent: '#b8940f', font: "'Inter','Segoe UI',sans-serif", radius: 12 },
+    midnight: { mode: 'dark', accent: '#60a5fa', font: "'Inter','Segoe UI',sans-serif", radius: 10 },
+    warm: { mode: 'light', accent: '#ea580c', font: "'Georgia',serif", radius: 8 },
+    premium: { mode: 'dark', accent: '#fbbf24', font: "'Playfair Display',serif", radius: 16 }
+  };
+  var theme = presets[name] || presets.dark;
+  saveThemeSettings(theme);
+  document.getElementById('themeToggle').checked = theme.mode === 'light';
+  document.getElementById('accentColor').value = theme.accent;
+  document.getElementById('accentColorHex').value = theme.accent;
+  document.getElementById('fontSelect').value = theme.font;
+  document.getElementById('radiusRange').value = theme.radius;
+  document.getElementById('radiusVal').textContent = theme.radius + 'px';
+  showToast('Theme preset loaded: ' + name, 'success');
+}
+
+// ── RECIPE DB ─────────────────────────────────────────
+function getAllAdminRecipes() {
+  var seed = (__RMH.BUSINESS.recipes || []).slice();
+  try {
+    var stored = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+    stored.forEach(function(r) { if (!seed.find(function(s) { return s.id === r.id; })) seed.push(r); });
+  } catch(e) {}
+  return seed;
+}
+
+function renderRecipeTable() {
+  var search = (document.getElementById('recipeSearchAdmin').value || '').toLowerCase();
+  var all = getAllAdminRecipes();
+  var filtered = search ? all.filter(function(r) { return (r.name||'').toLowerCase().indexOf(search) >= 0 || (r.author||'').toLowerCase().indexOf(search) >= 0; }) : all;
+  var el = document.getElementById('recipeTableWrap');
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="fas fa-book"></i>No recipes found</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>Name</th><th>Author</th><th>Category</th><th>Cuisine</th><th>Diet</th><th>Budget</th><th>Actions</th></tr></thead><tbody>';
+  filtered.forEach(function(r) {
+    var isUser = r.id.indexOf('user_') === 0;
+    var isChef = !!r.chefKey;
+    html += '<tr><td><strong>' + __RMH.escapeHtml(r.name) + '</strong>' + (isUser ? ' <span class="badge badge-warning" style="font-size:0.6rem">User</span>' : '') + (isChef ? ' <span class="badge badge-success" style="font-size:0.6rem">Chef</span>' : '') + '</td><td>' + __RMH.escapeHtml(r.author) + '</td><td>' + __RMH.escapeHtml(r.category) + '</td><td>' + __RMH.escapeHtml(r.cuisine) + '</td><td>' + r.diet + '</td><td>' + r.budget + (r.costEstimate ? ' <span style="color:var(--muted);font-size:0.7rem">' + r.costEstimate + '</span>' : '') + '</td><td style="white-space:nowrap">' +
+      '<button class="btn btn-outline btn-sm" onclick="editRecipe(\'' + r.id + '\')" title="Edit"><i class="fas fa-edit"></i></button> ' +
+      (isUser || isChef ? '<button class="btn btn-danger btn-sm" onclick="deleteRecipe(\'' + r.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>' : '<span style="color:var(--muted);font-size:0.65rem">seed</span>') +
+      '</td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+function openRecipeEditor() {
+  document.getElementById('recipeEditorTitle').textContent = 'New Recipe';
+  document.getElementById('editRecipeId').value = '';
+  document.getElementById('editRName').value = '';
+  document.getElementById('editRAuthor').value = 'Royal Mutton Hub Kitchen';
+  document.getElementById('editRCategory').value = 'Curry';
+  document.getElementById('editRCuisine').value = 'Andhra';
+  document.getElementById('editRMeal').value = 'Lunch/Dinner';
+  document.getElementById('editRDiet').value = 'non-veg';
+  document.getElementById('editRBudget').value = 'medium';
+  document.getElementById('editRCost').value = '';
+  document.getElementById('editRDiff').value = 'Medium';
+  document.getElementById('editRServings').value = '4';
+  document.getElementById('editRPrep').value = '20 min';
+  document.getElementById('editRCook').value = '45 min';
+  document.getElementById('editRImage').value = '🍛';
+  document.getElementById('editRIngredients').value = '';
+  document.getElementById('editRSteps').value = '';
+  document.getElementById('editRTips').value = '';
+  document.getElementById('editRRestrictions').value = '';
+  document.getElementById('editREquipment').value = '';
+  document.getElementById('editRChefInspired').checked = false;
+  document.getElementById('editRChefKey').style.display = 'none';
+  document.getElementById('editRSourceUrl').style.display = 'none';
+  openModal('recipeEditorModal');
+}
+
+function editRecipe(id) {
+  var all = getAllAdminRecipes();
+  var r = all.find(function(x) { return x.id === id; });
+  if (!r) { showToast('Recipe not found', 'error'); return; }
+  document.getElementById('recipeEditorTitle').textContent = 'Edit Recipe: ' + r.name;
+  document.getElementById('editRecipeId').value = id;
+  document.getElementById('editRName').value = r.name || '';
+  document.getElementById('editRAuthor').value = r.author || '';
+  document.getElementById('editRCategory').value = r.category || 'Curry';
+  document.getElementById('editRCuisine').value = r.cuisine || 'Andhra';
+  document.getElementById('editRMeal').value = r.mealType || 'Lunch/Dinner';
+  document.getElementById('editRDiet').value = r.diet || 'non-veg';
+  document.getElementById('editRBudget').value = r.budget || 'medium';
+  document.getElementById('editRCost').value = r.costEstimate || '';
+  document.getElementById('editRDiff').value = r.difficulty || 'Medium';
+  document.getElementById('editRServings').value = r.servings || '4';
+  document.getElementById('editRPrep').value = r.prep || '20 min';
+  document.getElementById('editRCook').value = r.cook || '45 min';
+  document.getElementById('editRImage').value = r.image || '🍛';
+  document.getElementById('editRIngredients').value = (r.ingredients || []).join('\n');
+  document.getElementById('editRSteps').value = (r.steps || []).join('\n');
+  document.getElementById('editRTips').value = r.tips || '';
+  document.getElementById('editRRestrictions').value = (r.restrictions || []).join(', ');
+  document.getElementById('editREquipment').value = (r.equipment || []).join(', ');
+  if (r.chefKey) {
+    document.getElementById('editRChefInspired').checked = true;
+    document.getElementById('editRChefKey').value = r.chefKey;
+    document.getElementById('editRChefKey').style.display = 'block';
+    document.getElementById('editRSourceUrl').value = r.sourceUrl || '';
+    document.getElementById('editRSourceUrl').style.display = 'block';
+  } else {
+    document.getElementById('editRChefInspired').checked = false;
+    document.getElementById('editRChefKey').style.display = 'none';
+    document.getElementById('editRSourceUrl').style.display = 'none';
+  }
+  openModal('recipeEditorModal');
+}
+
+function saveRecipeFromEditor() {
+  var id = document.getElementById('editRecipeId').value;
+  var name = document.getElementById('editRName').value.trim();
+  var author = document.getElementById('editRAuthor').value.trim();
+  if (!name || !author) { showToast('Name and author are required', 'error'); return; }
+  var ingreds = document.getElementById('editRIngredients').value.trim().split('\n').filter(Boolean);
+  var steps = document.getElementById('editRSteps').value.trim().split('\n').filter(Boolean);
+  if (ingreds.length < 2 || steps.length < 2) { showToast('Need at least 2 ingredients and 2 steps', 'error'); return; }
+  var restrictions = document.getElementById('editRRestrictions').value.trim().split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  var equipment = document.getElementById('editREquipment').value.trim().split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  var recipe = {
+    name: name,
+    author: author,
+    category: document.getElementById('editRCategory').value,
+    cuisine: document.getElementById('editRCuisine').value,
+    mealType: document.getElementById('editRMeal').value,
+    diet: document.getElementById('editRDiet').value,
+    budget: document.getElementById('editRBudget').value,
+    costEstimate: document.getElementById('editRCost').value.trim(),
+    difficulty: document.getElementById('editRDiff').value,
+    servings: document.getElementById('editRServings').value,
+    prep: document.getElementById('editRPrep').value.trim(),
+    cook: document.getElementById('editRCook').value.trim(),
+    image: document.getElementById('editRImage').value.trim() || '🍽',
+    ingredients: ingreds,
+    steps: steps,
+    tips: document.getElementById('editRTips').value.trim(),
+    restrictions: restrictions,
+    equipment: equipment
+  };
+  if (document.getElementById('editRChefInspired').checked) {
+    recipe.chefKey = document.getElementById('editRChefKey').value || null;
+    recipe.sourceUrl = document.getElementById('editRSourceUrl').value.trim() || null;
+  }
+  try {
+    var existing = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+    if (id && id.indexOf('user_') === 0) {
+      // Edit existing user recipe
+      var idx = existing.findIndex(function(r) { return r.id === id; });
+      if (idx >= 0) {
+        recipe.id = id;
+        existing[idx] = recipe;
+      } else {
+        recipe.id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2,4);
+        existing.push(recipe);
+      }
+    } else {
+      recipe.id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2,4);
+      existing.push(recipe);
+    }
+    localStorage.setItem('rmh_recipes', JSON.stringify(existing));
+    closeModal('recipeEditorModal');
+    renderRecipeTable();
+    showToast('Recipe saved!', 'success');
+  } catch(e) { showToast('Save failed: ' + e.message, 'error'); }
+}
+
+function deleteRecipe(id) {
+  if (!confirm('Delete this recipe? This cannot be undone.')) return;
+  try {
+    var existing = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+    var filtered = existing.filter(function(r) { return r.id !== id; });
+    localStorage.setItem('rmh_recipes', JSON.stringify(filtered));
+    renderRecipeTable();
+    showToast('Recipe deleted', 'success');
+  } catch(e) { showToast('Delete failed', 'error'); }
+}
+
+function exportRecipes() {
+  var all = getAllAdminRecipes();
+  var blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'rmh-recipes-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('Exported ' + all.length + ' recipes', 'success');
+}
+
+function importRecipes(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!Array.isArray(data)) { showToast('Invalid format: expected array', 'error'); return; }
+      var existing = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+      data.forEach(function(r) {
+        if (!r.id) r.id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2,4);
+        if (!existing.find(function(x) { return x.id === r.id; })) existing.push(r);
+      });
+      localStorage.setItem('rmh_recipes', JSON.stringify(existing));
+      renderRecipeTable();
+      showToast('Imported ' + data.length + ' recipes', 'success');
+    } catch(err) { showToast('Import failed: ' + err.message, 'error'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function batchDeleteRecipes() {
+  if (!confirm('Clear ALL user-submitted recipes? This cannot be undone.')) return;
+  try {
+    var existing = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+    var seed = existing.filter(function(r) { return r.id.indexOf('user_') !== 0; });
+    localStorage.setItem('rmh_recipes', JSON.stringify(seed));
+    renderRecipeTable();
+    showToast('User recipes cleared', 'success');
+  } catch(e) { showToast('Failed', 'error'); }
+}
+
+// ── MEETINGS ────────────────────────────────────────────
+function renderMeetings() {
+  var meetings = __RMH.safeParse(localStorage.getItem('rmh_meetings'), []);
+  var search = (document.getElementById('meetingSearch').value || '').toLowerCase();
+  var filter = document.getElementById('meetingFilter').value;
+  var filtered = meetings.filter(function(m) {
+    if (filter !== 'all' && m.status !== filter) return false;
+    if (search && m.name.toLowerCase().indexOf(search) === -1 && m.phone.indexOf(search) === -1 && (m.email || '').toLowerCase().indexOf(search) === -1) return false;
+    return true;
+  });
+  document.getElementById('meetingCount').textContent = filtered.length + ' / ' + meetings.length + ' meetings';
+  var wrap = document.getElementById('meetingsTableWrap');
+  if (filtered.length === 0) {
+    wrap.innerHTML = '<div class="empty-state"><i class="fas fa-calendar"></i>No meeting requests match your filter</div>';
+    return;
+  }
+  var statusBadge = function(s) {
+    var map = { pending: 'badge-warning', confirmed: 'badge-success', completed: 'badge', cancelled: 'badge-danger' };
+    return '<span class="badge ' + (map[s] || 'badge-warning') + '">' + s + '</span>';
+  };
+  wrap.innerHTML = '<table><thead><tr><th>Date</th><th>Time</th><th>Name</th><th>Phone</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+    filtered.sort(function(a,b) { return new Date(b.createdAt) - new Date(a.createdAt); }).map(function(m) {
+      return '<tr><td style="white-space:nowrap;">' + m.date + '</td><td>' + m.time + '</td><td><strong>' + __RMH.escapeHtml(m.name) + '</strong>' + (m.notes ? '<br><span style="font-size:0.7rem;color:#64748b;">' + __RMH.escapeHtml(m.notes) + '</span>' : '') + '</td><td>' + __RMH.escapeHtml(m.phone) + '</td><td>' + __RMH.escapeHtml(m.email || '-') + '</td><td>' + statusBadge(m.status) + '<br><span style="font-size:0.65rem;color:#475569;">' + new Date(m.createdAt).toLocaleDateString() + '</span></td><td style="white-space:nowrap;">' +
+        (m.status === 'pending' ? '<button class="btn btn-success btn-sm" onclick="updateMeetingStatus(\'' + m.id + '\',\'confirmed\')" title="Confirm"><i class="fas fa-check"></i></button> ' : '') +
+        (m.status === 'confirmed' ? '<button class="btn btn-primary btn-sm" onclick="updateMeetingStatus(\'' + m.id + '\',\'completed\')" title="Complete"><i class="fas fa-check-double"></i></button> ' : '') +
+        (m.status !== 'cancelled' ? '<button class="btn btn-danger btn-sm" onclick="updateMeetingStatus(\'' + m.id + '\',\'cancelled\')" title="Cancel"><i class="fas fa-times"></i></button>' : '') +
+        (m.status === 'cancelled' ? '<button class="btn btn-outline btn-sm" onclick="updateMeetingStatus(\'' + m.id + '\',\'pending\')" title="Reopen"><i class="fas fa-undo"></i></button>' : '') +
+      '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+function updateMeetingStatus(id, status) {
+  try {
+    var meetings = __RMH.safeParse(localStorage.getItem('rmh_meetings'), []);
+    var found = false;
+    meetings = meetings.map(function(m) { if (m.id === id) { m.status = status; found = true; } return m; });
+    if (!found) { showToast('Meeting not found', 'error'); return; }
+    localStorage.setItem('rmh_meetings', JSON.stringify(meetings));
+    showToast('Meeting ' + status, 'success');
+    renderMeetings();
+  } catch(e) { showToast('Error updating meeting', 'error'); }
+}
+
+// ── DATA MANAGEMENT ───────────────────────────────────
+function exportAllData() {
+  var pass = document.getElementById('exportPassword').value;
+  if (!pass) { showToast('Enter a password for encryption', 'error'); return; }
+  var data = {
+    _hash: localStorage.getItem('rmh_admin_hash'),
+    _apiKey: localStorage.getItem('rmh_admin_apiKey'),
+    _branding: localStorage.getItem('rmh_admin_branding'),
+    _cuts: localStorage.getItem('rmh_admin_cuts'),
+    _theme: localStorage.getItem('rmh_admin_theme'),
+    _customCss: localStorage.getItem('rmh_admin_customCss'),
+    _recipes: localStorage.getItem('rmh_recipes'),
+    _analytics: localStorage.getItem('rmh_analytics'),
+    _model: localStorage.getItem('rmh_admin_model'),
+    _appreciation: localStorage.getItem('rmh_appreciation')
+  };
+  __RMH.Crypto.encrypt(pass, data).then(function(enc) {
+    var blob = new Blob([enc], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'rmh-backup-' + new Date().toISOString().slice(0,10) + '.rmhbak';
+    a.click();
+    showToast('Encrypted backup downloaded', 'success');
+  }).catch(function() { showToast('Encryption failed', 'error'); });
+}
+
+function importAllData() {
+  var pass = document.getElementById('importPassword').value;
+  var file = document.getElementById('importFileInput').files[0];
+  if (!file || !pass) { showToast('Select a file and enter password', 'error'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    __RMH.Crypto.decrypt(pass, e.target.result).then(function(data) {
+      if (!data) { showToast('Decryption failed — wrong password or corrupt file', 'error'); return; }
+      if (data._hash) localStorage.setItem('rmh_admin_hash', data._hash);
+      if (data._apiKey) localStorage.setItem('rmh_admin_apiKey', data._apiKey);
+      if (data._branding) localStorage.setItem('rmh_admin_branding', data._branding);
+      if (data._cuts) localStorage.setItem('rmh_admin_cuts', data._cuts);
+      if (data._theme) localStorage.setItem('rmh_admin_theme', data._theme);
+      if (data._customCss) localStorage.setItem('rmh_admin_customCss', data._customCss);
+      if (data._recipes) localStorage.setItem('rmh_recipes', data._recipes);
+      if (data._analytics) localStorage.setItem('rmh_analytics', data._analytics);
+      if (data._model) localStorage.setItem('rmh_admin_model', data._model);
+      if (data._appreciation) localStorage.setItem('rmh_appreciation', data._appreciation);
+      showToast('Data restored successfully! Reload to apply.', 'success');
+    }).catch(function() { showToast('Decryption failed', 'error'); });
+  };
+  reader.readAsText(file);
+}
+
+function createLocalBackup() {
+  var data = {
+    hash: localStorage.getItem('rmh_admin_hash'),
+    apiKey: '***encrypted***',
+    branding: localStorage.getItem('rmh_admin_branding'),
+    cuts: localStorage.getItem('rmh_admin_cuts'),
+    theme: localStorage.getItem('rmh_admin_theme'),
+    customCss: localStorage.getItem('rmh_admin_customCss'),
+    recipeCount: (__RMH.safeParse(localStorage.getItem('rmh_recipes'), []) || []).length,
+    analyticsCounts: (function() {
+      var a = __RMH.safeParse(localStorage.getItem('rmh_analytics'), {});
+      return { pageViews: (a.pageViews||[]).length, apiCalls: (a.apiCalls||[]).length, leads: (a.leads||[]).length };
+    })(),
+    timestamp: new Date().toISOString()
+  };
+  var backups = __RMH.safeParse(localStorage.getItem('rmh_admin_backups'), []);
+  backups.push(data);
+  if (backups.length > 20) backups = backups.slice(-20);
+  localStorage.setItem('rmh_admin_backups', JSON.stringify(backups));
+  loadBackupList();
+  showToast('Backup snapshot created', 'success');
+}
+
+function loadBackupList() {
+  var backups = __RMH.safeParse(localStorage.getItem('rmh_admin_backups'), []);
+  var el = document.getElementById('backupList');
+  if (backups.length === 0) {
+    el.innerHTML = '<div style="font-size:0.78rem;color:var(--muted)">No backups yet</div>';
+    return;
+  }
+  el.innerHTML = backups.slice(-5).reverse().map(function(b, i) {
+    return '<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.78rem">' +
+      '<strong>' + new Date(b.timestamp).toLocaleString() + '</strong> — ' +
+      b.recipeCount + ' recipes, ' + b.analyticsCounts.leads + ' leads' +
+      '</div>';
+  }).join('');
+}
+
+function clearUserRecipes() {
+  batchDeleteRecipes();
+}
+
+function resetAnalytics() {
+  if (!confirm('Reset all analytics data (page views, API calls, leads)?')) return;
+  localStorage.setItem('rmh_analytics', JSON.stringify({ pageViews: [], apiCalls: [], leads: [] }));
+  showToast('Analytics reset', 'success');
+  refreshUsageStats();
+  refreshOverview();
+}
+
+function factoryReset() {
+  if (!confirm('⚠️ FACTORY RESET: This will delete ALL data including passwords, API keys, recipes, and analytics. Are you sure?')) return;
+  if (!confirm('Last chance! This is irreversible. Delete everything?')) return;
+  var keys = ['rmh_admin_hash', 'rmh_admin_apiKey', 'rmh_admin_branding', 'rmh_admin_cuts', 'rmh_admin_theme', 'rmh_admin_customCss', 'rmh_recipes', 'rmh_analytics', 'rmh_admin_model', 'rmh_appreciation', 'rmh_admin_backups', 'rmh_ratelimit', 'rmh_admin_*'];
+  ['rmh_admin_hash','rmh_admin_apiKey','rmh_admin_branding','rmh_admin_cuts','rmh_admin_theme','rmh_admin_customCss','rmh_recipes','rmh_analytics','rmh_admin_model','rmh_appreciation','rmh_admin_backups','rmh_ratelimit'].forEach(function(k) { localStorage.removeItem(k); });
+  showToast('Factory reset complete. Page will reload.', 'success');
+  setTimeout(function() { location.reload(); }, 1000);
+}
+
+// ── API USAGE ──────────────────────────────────────────
+function refreshUsageStats() {
+  var analytics = getAnalytics();
+  var pvs = analytics.pageViews || [];
+  var calls = analytics.apiCalls || [];
+  var leads = analytics.leads || [];
+
+  // Summary
+  document.getElementById('usageStats').innerHTML = [
+    '<div class="stat-card"><div class="num">' + pvs.length + '</div><div class="label">Total Page Views</div><div style="font-size:0.72rem;color:var(--muted);margin-top:4px">' + (pvs.length > 0 ? new Date(pvs[pvs.length-1]).toLocaleDateString() : 'N/A') + ' (latest)</div></div>',
+    '<div class="stat-card"><div class="num">' + calls.length + '</div><div class="label">API Calls</div><div style="font-size:0.72rem;color:var(--muted);margin-top:4px">' + (calls.length > 0 ? new Date(calls[calls.length-1].date).toLocaleDateString() : 'N/A') + ' (latest)</div></div>',
+    '<div class="stat-card"><div class="num">' + leads.length + '</div><div class="label">Total Leads</div><div style="font-size:0.72rem;color:var(--muted);margin-top:4px">' + (leads.length > 0 ? new Date(leads[leads.length-1].date).toLocaleDateString() : 'N/A') + ' (latest)</div></div>',
+    '<div class="stat-card"><div class="num">' + (pvs.length > 0 ? Math.round(pvs.length / Math.max(1,Math.ceil((Date.now() - new Date(pvs[0]||Date.now()))/86400000))) : 0) + '</div><div class="label">Avg Views/Day</div></div>'
+  ].join('');
+
+  // Leads table
+  var leadsHtml = '';
+  if (leads.length === 0) {
+    leadsHtml = '<div class="empty-state"><i class="fas fa-inbox"></i>No leads yet</div>';
+  } else {
+    leadsHtml = '<table><thead><tr><th>Name</th><th>Source</th><th>Date</th><th>Recipe</th></tr></thead><tbody>';
+    leads.slice().reverse().slice(0,50).forEach(function(l) {
+      leadsHtml += '<tr><td>' + __RMH.escapeHtml(l.name || 'Anonymous') + '</td><td><span class="badge badge-' + (l.source === 'chatbot' ? 'success' : 'warning') + '">' + __RMH.escapeHtml(l.source || 'form') + '</span></td><td>' + new Date(l.date).toLocaleString() + '</td><td>' + __RMH.escapeHtml(l.recipe || '-') + '</td></tr>';
+    });
+    leadsHtml += '</tbody></table>';
+  }
+  document.getElementById('leadsTableWrap').innerHTML = leadsHtml;
+
+  // API calls table
+  var callsHtml = '';
+  if (calls.length === 0) {
+    callsHtml = '<div class="empty-state"><i class="fas fa-terminal"></i>No API calls recorded</div>';
+  } else {
+    callsHtml = '<table><thead><tr><th>Date</th><th>Model</th><th>Query</th></tr></thead><tbody>';
+    calls.slice().reverse().slice(0,30).forEach(function(c) {
+      callsHtml += '<tr><td>' + new Date(c.date).toLocaleString() + '</td><td><code style="font-size:0.7rem;color:var(--primary)">' + __RMH.escapeHtml(c.model || 'openrouter/free') + '</code></td><td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;font-size:0.78rem;color:var(--muted)">' + __RMH.escapeHtml((c.query||'').substring(0,80)) + '</td></tr>';
+    });
+    callsHtml += '</tbody></table>';
+  }
+  document.getElementById('apiCallsTableWrap').innerHTML = callsHtml;
+}
+
+// ── CSV / JSON Import / Export ──────────────────────
+var CSV_HEADERS_RECIPES = ['id','name','author','category','cuisine','mealType','diet','budget','costEstimate','image','difficulty','prep','cook','servings','restrictions','ingredients','steps','tips','equipment','chefKey','sourceUrl'];
+var CSV_HEADERS_MEETINGS = ['id','name','phone','email','date','time','notes','status','createdAt'];
+var CSV_HEADERS_LEADS = ['name','source','date','recipe'];
+
+function _download(data, filename, type) {
+  var blob = new Blob([data], { type: type });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  showToast('Downloaded ' + filename, 'success');
+}
+
+function _objToCSV(rows, headers) {
+  var esc = function(v) {
+    if (v == null) return '';
+    var s = String(v);
+    if (s.indexOf(',') > -1 || s.indexOf('"') > -1 || s.indexOf('\n') > -1) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  };
+  var lines = [headers.map(esc).join(',')];
+  rows.forEach(function(r) {
+    lines.push(headers.map(function(h) {
+      var v = r[h];
+      if (Array.isArray(v)) return esc(v.join(';'));
+      return esc(v);
+    }).join(','));
+  });
+  return lines.join('\r\n');
+}
+
+function _csvParse(text) {
+  var rows = [];
+  var lines = text.replace(/\r\n/g, '\n').split('\n');
+  if (lines.length < 2) return rows;
+  var parseLine = function(line) {
+    var out = [], cur = '', inQ = false;
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (inQ) {
+        if (c === '"' && line[i+1] === '"') { cur += '"'; i++; }
+        else if (c === '"') { inQ = false; }
+        else { cur += c; }
+      } else {
+        if (c === '"') { inQ = true; }
+        else if (c === ',') { out.push(cur); cur = ''; }
+        else { cur += c; }
+      }
+    }
+    out.push(cur);
+    return out;
+  };
+  var headers = parseLine(lines[0]);
+  for (var i = 1; i < lines.length; i++) {
+    var vals = parseLine(lines[i]);
+    if (vals.length === 1 && vals[0].trim() === '') continue;
+    var obj = {};
+    headers.forEach(function(h, idx) {
+      var v = vals[idx] || '';
+      // Try to parse as array (semicolon-separated)
+      if (v.indexOf(';') > -1) obj[h] = v.split(';');
+      else obj[h] = v;
+    });
+    rows.push(obj);
+  }
+  return rows;
+}
+
+// ── Recipes ──
+function exportRecipesJSON() {
+  var recipes = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+  _download(JSON.stringify(recipes, null, 2), 'recipes-' + new Date().toISOString().slice(0,10) + '.json', 'application/json');
+}
+function exportRecipesCSV() {
+  var recipes = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+  _download(_objToCSV(recipes, CSV_HEADERS_RECIPES), 'recipes-' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv');
+}
+function importRecipesFromJSON(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) { showToast('Invalid JSON — expected an array', 'error'); return; }
+      var existing = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+      var added = 0;
+      data.forEach(function(r) {
+        if (r.name) { r.id = r.id || 'user_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); existing.push(r); added++; }
+      });
+      localStorage.setItem('rmh_recipes', JSON.stringify(existing));
+      showToast('Imported ' + added + ' recipes', 'success');
+      renderRecipeTable();
+    } catch(e) { showToast('Parse error: ' + e.message, 'error'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+function importRecipesFromCSV(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var rows = _csvParse(ev.target.result);
+      var existing = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+      var added = 0;
+      rows.forEach(function(r) {
+        if (r.name) {
+          // Convert array fields from semicolons
+          ['ingredients','steps','tips','equipment','restrictions'].forEach(function(k) {
+            if (typeof r[k] === 'string' && r[k].indexOf(';') > -1) r[k] = r[k].split(';').map(function(s) { return s.trim(); });
+            else if (typeof r[k] === 'string') r[k] = [r[k]];
+          });
+          r.id = r.id || 'user_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+          existing.push(r);
+          added++;
+        }
+      });
+      localStorage.setItem('rmh_recipes', JSON.stringify(existing));
+      showToast('Imported ' + added + ' recipes from CSV', 'success');
+      renderRecipeTable();
+    } catch(e) { showToast('Parse error: ' + e.message, 'error'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ── Meetings ──
+function exportMeetingsJSON() {
+  var meetings = __RMH.safeParse(localStorage.getItem('rmh_meetings'), []);
+  _download(JSON.stringify(meetings, null, 2), 'meetings-' + new Date().toISOString().slice(0,10) + '.json', 'application/json');
+}
+function exportMeetingsCSV() {
+  var meetings = __RMH.safeParse(localStorage.getItem('rmh_meetings'), []);
+  _download(_objToCSV(meetings, CSV_HEADERS_MEETINGS), 'meetings-' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv');
+}
+function importMeetingsFromJSON(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) { showToast('Invalid JSON', 'error'); return; }
+      var existing = __RMH.safeParse(localStorage.getItem('rmh_meetings'), []);
+      var added = 0;
+      data.forEach(function(m) {
+        if (m.name) { m.id = m.id || 'mt_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); existing.push(m); added++; }
+      });
+      localStorage.setItem('rmh_meetings', JSON.stringify(existing));
+      showToast('Imported ' + added + ' meetings', 'success');
+      renderMeetings();
+    } catch(e) { showToast('Parse error: ' + e.message, 'error'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+function importMeetingsFromCSV(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var rows = _csvParse(ev.target.result);
+      var existing = __RMH.safeParse(localStorage.getItem('rmh_meetings'), []);
+      var added = 0;
+      rows.forEach(function(m) {
+        if (m.name) {
+          m.id = m.id || 'mt_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+          m.status = m.status || 'pending';
+          existing.push(m);
+          added++;
+        }
+      });
+      localStorage.setItem('rmh_meetings', JSON.stringify(existing));
+      showToast('Imported ' + added + ' meetings from CSV', 'success');
+      renderMeetings();
+    } catch(e) { showToast('Parse error: ' + e.message, 'error'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ── Leads ──
+function exportLeadsJSON() {
+  var analytics = __RMH.safeParse(localStorage.getItem('rmh_analytics'), {});
+  var leads = analytics.leads || [];
+  _download(JSON.stringify(leads, null, 2), 'leads-' + new Date().toISOString().slice(0,10) + '.json', 'application/json');
+}
+function exportLeadsCSV() {
+  var analytics = __RMH.safeParse(localStorage.getItem('rmh_analytics'), {});
+  var leads = analytics.leads || [];
+  _download(_objToCSV(leads, CSV_HEADERS_LEADS), 'leads-' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv');
+}
+
+// ── Reviews & Ratings ──
+function exportReviewsJSON() {
+  var reviews = __RMH.safeParse(localStorage.getItem('rmh_reviews'), {});
+  _download(JSON.stringify(reviews, null, 2), 'reviews-' + new Date().toISOString().slice(0,10) + '.json', 'application/json');
+}
+function exportAppreciationJSON() {
+  var appreciation = __RMH.safeParse(localStorage.getItem('rmh_appreciation'), {});
+  _download(JSON.stringify(appreciation, null, 2), 'appreciation-' + new Date().toISOString().slice(0,10) + '.json', 'application/json');
+}
+
+// ── Bootstrap ──────────────────────────────────────────
+// If already logged in (e.g. after import reload), skip login
+document.addEventListener('DOMContentLoaded', function() {
+  // Apply theme on load
+  var theme = __RMH.safeParse(localStorage.getItem('rmh_admin_theme'), { mode: 'dark', accent: '#d4a017', font: "'Inter','Segoe UI',sans-serif", radius: 14 });
+  applyTheme(theme);
+  if (theme.font) document.body.style.fontFamily = theme.font;
+  if (theme.radius) document.documentElement.style.setProperty('--radius', theme.radius + 'px');
+  // Custom CSS
+  var customCss = localStorage.getItem('rmh_admin_customCss');
+  if (customCss) {
+    var st = document.createElement('style');
+    st.textContent = ':root {' + customCss + '}';
+    document.head.appendChild(st);
+  }
+});
+</script>
+</body>
+</html>

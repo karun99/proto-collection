@@ -1,0 +1,18 @@
+[build]
+  publish = "."
+
+[[edge_functions]]
+  path = "/.netlify/edge-functions/*"
+  function = "api"
+
+[[edge_functions]]
+  path = "/.netlify/edge-functions/sync"
+  function = "sync"
+
+[[edge_functions]]
+  path = "/.netlify/edge-functions/load"
+  function = "load"
+
+[[edge_functions]]
+  path = "/.netlify/edge-functions/geo"
+  function = "geo"

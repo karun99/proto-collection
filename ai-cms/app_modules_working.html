@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Organic CMS - Module Architecture</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #0f172a;
+            --text: #334155;
+            --bg: #f8fafc;
+        }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        h1 { color: var(--secondary); font-size: 2.5rem; margin-bottom: 10px; }
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .card h3 {
+            color: var(--primary);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .workflow {
+            background: var(--secondary);
+            color: white;
+            padding: 40px;
+            border-radius: 30px;
+            margin-top: 60px;
+        }
+        .step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .number {
+            background: var(--primary);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="badge">Official Documentation</span>
+            <h1>AI Organic Growth CMS</h1>
+            <p>The technical blueprint of the AI-powered SEO Operating System.</p>
+        </header>
+
+        <section class="module-grid">
+            <div class="card">
+                <h3>🧠 AI Engine</h3>
+                <p>Multi-language content generation (EN, ES, HI, FR, DE) using OpenRouter. Handles SEO rewriting, summarization, and FAQ generation automatically.</p>
+            </div>
+            <div class="card">
+                <h3>📊 Analytics Hub</h3>
+                <p>Real-time tracking of organic traffic, conversion rates, and SEO performance trends using high-performance charting libraries.</p>
+            </div>
+            <div class="card">
+                <h3>⚙️ Automation</h3>
+                <p>Scheduled workflows that trigger content research, generation, and publishing to Blogger without human intervention.</p>
+            </div>
+            <div class="card">
+                <h3>🛍️ Affiliate Engine</h3>
+                <p>Smart insertion of affiliate products based on content context. Automatically tracks clicks and conversions per post.</p>
+            </div>
+            <div class="card">
+                <h3>🎨 White-Label</h3>
+                <p>Full customization of brand name, logos, and color schemes. Workspace isolation ensures multi-client data privacy.</p>
+            </div>
+            <div class="card">
+                <h3>💾 Local-First DB</h3>
+                <p>Powered by IndexedDB for offline-capable, high-speed data management. Built-in JSON/SQL export for enterprise mobility.</p>
+            </div>
+        </section>
+
+        <section class="workflow">
+            <h2>Core Content Workflow</h2>
+            <div class="step">
+                <div class="number">1</div>
+                <div>
+                    <strong>Research & Input</strong>
+                    <p>User inputs a topic or the automation engine detects a trending keyword.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="number">2</div>
+                <div>
+                    <strong>Multi-Language AI Generation</strong>
+                    <p>AI crafts a full-length SEO blog post in the target language with proper headings and structure.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="number">3</div>
+                <div>
+                    <strong>SEO & Affiliate Injection</strong>
+                    <p>System scores the content, optimizes meta tags, and injects relevant affiliate CTAs.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="number">4</div>
+                <div>
+                    <strong>One-Click Sync</strong>
+                    <p>Content is pushed to Blogger via API or stored as a draft for final human review.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer style="text-align: center; margin-top: 60px; color: #94a3b8; font-size: 0.9rem;">
+            &copy; 2026 AI Organic CMS Platform. Built for autonomous growth.
+        </footer>
+    </div>
+</body>
+</html>

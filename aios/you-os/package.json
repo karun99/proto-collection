@@ -1,0 +1,18 @@
+{
+  "name": "you-os",
+  "version": "2.0.0",
+  "description": "You OS – Multi-Purpose Cloud OS with Netlify Blob & Edge",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "netlify build",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^1.0.0",
+    "@netlify/edge-functions": "^2.0.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+    "search_criteria": {
+        "role": "Python Developer",
+        "location": "Remote",
+        "skills": [
+            "python",
+            "sql",
+            "flask"
+        ],
+        "resume_file": ""
+    },
+    "total_found": 0,
+    "jobs": []
+}

@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VijayaFresh Meat - Vijayawada</title>
+    <style>
+        :root {
+            --red: #c0392b;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --gray: #6c757d;
+            --green: #25D366;
+            --border: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+
+        /* ===== NAVBAR ===== */
+        .nav {
+            background: var(--white);
+            padding: 15px 25px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-bottom: 3px solid var(--red);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--red);
+            text-decoration: none;
+        }
+        .logo span { color: var(--dark); font-weight: 400; }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--red); }
+
+        .btn-wa {
+            background: var(--green);
+            color: white !important;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 600 !important;
+            font-size: 0.85rem;
+        }
+        .btn-wa:hover { background: #128C7E !important; }
+
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(135deg, #fff5f5, #fff, #fdf2f2);
+            padding: 70px 20px 60px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+        .hero h1 span { color: var(--red); }
+        .hero p { color: var(--gray); font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px; }
+
+        .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+        .btn {
+            padding: 13px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        .btn-red { background: var(--red); color: white; }
+        .btn-red:hover { background: #a93226; }
+        .btn-green { background: var(--green); color: white; }
+        .btn-green:hover { background: #128C7E; }
+        .btn-outline { border: 2px solid var(--red); color: var(--red); background: transparent; }
+        .btn-outline:hover { background: var(--red); color: white; }
+
+        /* ===== SECTIONS ===== */
+        section { padding: 60px 20px; }
+        .container { max-width: 1050px; margin: 0 auto; }
+        
+        .sec-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .sec-sub {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 40px;
+        }
+
+        /* ===== PRODUCTS ===== */
+        .prod-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .prod-card {
+            background: var(--white);
+            padding: 25px 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .prod-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-color: var(--red); }
+        .prod-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .prod-card h3 { font-size: 1rem; margin-bottom: 5px; }
+        .prod-card p { font-size: 0.8rem; color: var(--gray); }
+
+        /* ===== TRUST ===== */
+        .trust-section { background: var(--light); }
+        
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .trust-item {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .trust-item .icon { font-size: 1.8rem; margin-bottom: 8px; }
+        .trust-item h4 { font-size: 0.9rem; margin-bottom: 4px; }
+        .trust-item p { font-size: 0.78rem; color: var(--gray); }
+
+        .reviews {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .review {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--red);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--red);
+        }
+        .review .stars { color: #f39c12; margin-bottom: 8px; }
+        .review .text { font-style: italic; color: #555; font-size: 0.9rem; margin-bottom: 8px; }
+        .review .author { font-weight: 600; font-size: 0.85rem; }
+        .review .loc { color: var(--gray); font-size: 0.8rem; }
+
+        /* ===== ORDER ===== */
+        .order-section {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+        }
+        .order-section .sec-title { color: white; }
+        .order-section .sec-sub { color: #ccc; }
+
+        .form-box {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            color: var(--dark);
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus { outline: none; border-color: var(--red); }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover { background: #a93226; }
+
+        .success-msg {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #1a1a2e;
+            color: #aaa;
+            padding: 35px 20px 20px;
+            text-align: center;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin: 0 auto 25px;
+            text-align: left;
+        }
+        .footer-col h4 { color: white; margin-bottom: 12px; }
+        .footer-col a, .footer-col p { color: #aaa; text-decoration: none; font-size: 0.85rem; display: block; margin-bottom: 6px; }
+        .footer-col a:hover { color: var(--red); }
+        .footer-bot { border-top: 1px solid #333; padding-top: 18px; font-size: 0.8rem; color: #666; }
+
+        /* ===== BACK TO TOP ===== */
+        .btt {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--red);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+            z-index: 99;
+        }
+        .btt.show { display: flex; }
+        .btt:hover { background: #a93226; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .menu-btn { display: block; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 65px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 18px;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+                gap: 12px;
+            }
+            .nav-links.open { display: flex; }
+            .hero h1 { font-size: 1.8rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .prod-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .prod-grid { grid-template-columns: 1fr; }
+            .btns { flex-direction: column; align-items: center; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav class="nav">
+        <a href="#" class="logo">VijayaFresh <span>Meat</span></a>
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#trust">Why Us</a></li>
+            <li><a href="#order">Order</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="https://wa.me/919XXXXXXXXX" class="btn-wa" target="_blank">📱 WhatsApp</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <span class="hero-badge">🟢 Open for Orders — Delivery in 2 Hours</span>
+        <h1>Fresh Meat, <span>Delivered Daily</span> to Your Doorstep</h1>
+        <p>Vijayawada's trusted meat delivery. Fresh chicken, mutton, fish & eggs. FSSAI certified, hygienically packed, cold-chain maintained. Serving Vijayawada, Guntur & Mangalagiri.</p>
+        <div class="btns">
+            <a href="#order" class="btn btn-red">🛒 Order Now</a>
+            <a href="https://wa.me/919XXXXXXXXX" class="btn btn-green" target="_blank">📱 WhatsApp</a>
+            <a href="#products" class="btn btn-outline">📋 View Products</a>
+        </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="products">
+        <div class="container">
+            <h2 class="sec-title">Our Products</h2>
+            <p class="sec-sub">Fresh, hygienic, prepared just the way you want</p>
+            <div class="prod-grid">
+                <div class="prod-card" onclick="goOrder('Chicken')">
+                    <div class="prod-icon">🍗</div><h3>Fresh Chicken</h3><p>Curry cut, boneless, whole</p>
+                </div>
+                <div class="prod-card" onclick="goOrder('Mutton')">
+                    <div class="prod-icon">🥩</div><h3>Tender Mutton</h3><p>Goat meat, curry & biryani cut</p>
+                </div>
+                <div class="prod-card" onclick="goOrder('Fish')">
+                    <div class="prod-icon">🐟</div><h3>Fresh Fish</h3><p>Local catch, cleaned & ready</p>
+                </div>
+                <div class="prod-card" onclick="goOrder('Eggs')">
+                    <div class="prod-icon">🥚</div><h3>Country Eggs</h3><p>Farm-fresh brown eggs</p>
+                </div>
+                <div class="prod-card" onclick="goOrder('Biryani Kit')">
+                    <div class="prod-icon">🍲</div><h3>Biryani Kit</h3><p>Meat + spices, just cook!</p>
+                </div>
+                <div class="prod-card" onclick="goOrder('B2B')">
+                    <div class="prod-icon">🏢</div><h3>Bulk Supply</h3><p>Hotels, restaurants, caterers</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST -->
+    <section class="trust-section" id="trust">
+        <div class="container">
+            <h2 class="sec-title">Why Choose VijayaFresh?</h2>
+            <p class="sec-sub">Quality and hygiene you can trust</p>
+            <div class="trust-grid">
+                <div class="trust-item"><div class="icon">✅</div><h4>FSSAI Licensed</h4><p>Food safety compliant</p></div>
+                <div class="trust-item"><div class="icon">❄️</div><h4>Cold-Chain</h4><p>Temperature controlled</p></div>
+                <div class="trust-item"><div class="icon">🧼</div><h4>100% Hygienic</h4><p>Sanitized processing</p></div>
+                <div class="trust-item"><div class="icon">🚚</div><h4>Fast Delivery</h4><p>2-4 hours in Vijayawada</p></div>
+                <div class="trust-item"><div class="icon">💰</div><h4>Best Prices</h4><p>No hidden charges</p></div>
+                <div class="trust-item"><div class="icon">🔄</div><h4>Fresh Guarantee</h4><p>Or 100% refund</p></div>
+            </div>
+            <div class="reviews">
+                <div class="review"><div class="stars">⭐⭐⭐⭐⭐</div><p class="text">"Great service! Chicken was fresh and clean. Regular customer now."</p><p class="author">Ramesh K.</p><p class="loc">Vijayawada</p></div>
+                <div class="review"><div class="stars">⭐⭐⭐⭐⭐</div><p class="text">"Reliable bulk supply for our hotel. Timely and consistent quality."</p><p class="author">Srinivas K.</p><p class="loc">Guntur</p></div>
+                <div class="review"><div class="stars">⭐⭐⭐⭐⭐</div><p class="text">"Biryani kit is a game changer! Perfect mutton with measured spices."</p><p class="author">Priya M.</p><p class="loc">Mangalagiri</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ORDER -->
+    <section class="order-section" id="order">
+        <div class="container">
+            <h2 class="sec-title">Place Your Order</h2>
+            <p class="sec-sub">Fill the form — we'll confirm on WhatsApp</p>
+            <div class="form-box">
+                <form id="orderForm">
+                    <div class="form-row">
+                        <div class="form-group"><label>Your Name *</label><input type="text" id="name" placeholder="Full name" required></div>
+                        <div class="form-group"><label>Phone *</label><input type="tel" id="phone" placeholder="+91 9XXXXXXXXX" required></div>
+                    </div>
+                    <div class="form-group"><label>Product *</label>
+                        <select id="product" required>
+                            <option value="">-- Choose --</option>
+                            <option>Chicken - Curry Cut</option><option>Chicken - Boneless</option><option>Chicken - Whole</option>
+                            <option>Mutton - Curry Cut</option><option>Mutton - Biryani Cut</option>
+                            <option>Fish - Local Catch</option><option>Country Eggs</option>
+                            <option>Biryani Kit - Chicken</option><option>Biryani Kit - Mutton</option><option>B2B Bulk Order</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Quantity</label><input type="text" id="quantity" placeholder="e.g., 2 kg"></div>
+                        <div class="form-group"><label>Area *</label>
+                            <select id="area" required>
+                                <option value="">-- Select --</option>
+                                <option>Vijayawada</option><option>Guntur</option><option>Mangalagiri</option><option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Notes (optional)</label><textarea id="notes" rows="2" placeholder="Any preferences..."></textarea></div>
+                    <button type="submit" class="submit-btn">📱 Send Order via WhatsApp</button>
+                </form>
+                <div class="success-msg" id="successMsg">✅ Order sent! We'll confirm on WhatsApp shortly.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="contact">
+        <div class="footer-grid">
+            <div class="footer-col"><h4>VijayaFresh Meat</h4><p>Fresh, hygienic meat delivery in Vijayawada, Guntur & nearby areas. FSSAI licensed.</p><p>🟢 Open Daily: 6 AM – 8 PM</p></div>
+            <div class="footer-col"><h4>Quick Links</h4><a href="#home">Home</a><a href="#products">Products</a><a href="#trust">Why Us</a><a href="#order">Order</a></div>
+            <div class="footer-col"><h4>Contact</h4><p>📞 <a href="tel:+919XXXXXXXXX">+91 9XXXXXXXXX</a></p><p>📱 <a href="https://wa.me/919XXXXXXXXX">WhatsApp</a></p><p>📍 Near Benz Circle, Vijayawada</p></div>
+        </div>
+        <div class="footer-bot">&copy; 2026 VijayaFresh Meat (Krishna Meat Hub). All rights reserved.</div>
+    </footer>
+
+    <!-- BACK TO TOP -->
+    <button class="btt" id="btt">↑</button>
+
+    <script>
+        // Mobile menu
+        document.getElementById('menuBtn').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+        document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click', () => {
+            document.getElementById('navLinks').classList.remove('open');
+        }));
+
+        // Back to top
+        const btt = document.getElementById('btt');
+        window.addEventListener('scroll', () => btt.classList.toggle('show', window.scrollY > 400));
+        btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Scroll to order + pre-select product
+        function goOrder(name) {
+            document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                const sel = document.getElementById('product');
+                [...sel.options].forEach((o, i) => { if (o.text.includes(name)) sel.selectedIndex = i; });
+            }, 600);
+        }
+
+        // Form submit → WhatsApp
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const n = document.getElementById('name').value.trim();
+            const p = document.getElementById('phone').value.trim();
+            const prod = document.getElementById('product').value;
+            const qty = document.getElementById('quantity').value.trim() || 'Not specified';
+            const area = document.getElementById('area').value;
+            const notes = document.getElementById('notes').value.trim() || 'None';
+            
+            const msg = `🛒 *New Order - VijayaFresh Meat*%0A%0A👤 ${n}%0A📞 ${p}%0A🍖 ${prod}%0A⚖️ ${qty}%0A📍 ${area}%0A📝 ${notes}%0A%0APlease confirm & share total.`;
+            document.getElementById('successMsg').style.display = 'block';
+            window.open(`https://wa.me/919XXXXXXXXX?text=${msg}`, '_blank'); // ← CHANGE NUMBER
+            setTimeout(() => { this.reset(); document.getElementById('successMsg').style.display = 'none'; }, 3000);
+        });
+    </script>
+</body>
+</html>

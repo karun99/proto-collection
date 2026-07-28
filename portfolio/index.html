@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sai Karun Nandipati | AI Architect & Professor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Fira+Code:wght@300;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #00f2ff;
+            --bg: #0a0a0c;
+        }
+        body {
+            background-color: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Lato', sans-serif;
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-fira { font-family: 'Fira Code', monospace; }
+        
+        .glow {
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+        .border-glow {
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #00f2ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-opacity-90 bg-[#0a0a0c] border-b border-gray-800 py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="#" class="font-orbitron text-xl font-bold gradient-text tracking-widest uppercase">SKN.AI</a>
+            <div class="hidden md:flex space-x-8 font-fira text-sm">
+                <a href="#about" class="hover:text-[#00f2ff] transition">_about</a>
+                <a href="#expertise" class="hover:text-[#00f2ff] transition">_expertise</a>
+                <a href="#works" class="hover:text-[#00f2ff] transition">_works</a>
+                <a href="#contact" class="px-4 py-1 border border-[#00f2ff] text-[#00f2ff] rounded hover:bg-[#00f2ff] hover:text-black transition">_contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center pt-20">
+        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="font-fira text-[#00f2ff] mb-4 text-lg">Hello, I am</h2>
+                <h1 class="font-orbitron text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    Sai Karun <br> <span class="gradient-text">Nandipati</span>
+                </h1>
+                <p class="text-xl text-gray-400 mb-8 max-w-lg">
+                    AI Architect & Assistant Professor. Bridging the gap between 
+                    <span class="text-white">Neural Logic</span> and <span class="text-white">Human Knowledge</span> through autonomous systems.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#works" class="bg-[#00f2ff] text-black px-8 py-3 rounded font-bold hover:bg-[#00d8e6] transition shadow-lg shadow-[#00f2ff22]">View Projects</a>
+                    <a href="#expertise" class="border border-gray-700 px-8 py-3 rounded font-bold hover:border-[#00f2ff] transition">My Expertise</a>
+                </div>
+            </div>
+            <div class="relative hidden md:block">
+                <div class="w-80 h-80 mx-auto rounded-full bg-gradient-to-tr from-[#00f2ff33] to-transparent animate-pulse absolute -inset-4 blur-2xl"></div>
+                <div class="w-80 h-80 mx-auto rounded-2xl border-glow card flex items-center justify-center overflow-hidden">
+                    <div class="text-center p-8">
+                        <div class="font-fira text-[#00f2ff] text-4xl mb-4 opacity-50">{ AI }</div>
+                        <p class="font-orbitron text-sm tracking-tighter text-gray-500 uppercase">Intelligence <br> Architect</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-[#0c0c0e]">
+        <div class="container mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="font-orbitron text-3xl font-bold mb-4">Research & Philosophy</h2>
+                <div class="h-1 w-20 bg-[#00f2ff] mx-auto"></div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card p-8 rounded-xl border-glow">
+                    <h3 class="font-orbitron text-[#00f2ff] text-xl mb-4 uppercase">Agentic AI</h3>
+                    <p class="text-gray-400 leading-relaxed">Designing autonomous systems that reason, plan, and execute complex tasks with surgical precision.</p>
+                </div>
+                <div class="card p-8 rounded-xl border-glow">
+                    <h3 class="font-orbitron text-[#00f2ff] text-xl mb-4 uppercase">Neural Logic</h3>
+                    <p class="text-gray-400 leading-relaxed">Architecting intelligence through the convergence of deep learning and symbolic reasoning.</p>
+                </div>
+                <div class="card p-8 rounded-xl border-glow">
+                    <h3 class="font-orbitron text-[#00f2ff] text-xl mb-4 uppercase">Pedagogy</h3>
+                    <p class="text-gray-400 leading-relaxed">Translating cutting-edge AI research into actionable knowledge frameworks for the next generation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expertise Section -->
+    <section id="expertise" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row gap-12">
+                <div class="md:w-1/3">
+                    <h2 class="font-orbitron text-4xl font-bold mb-6">Expertise <br> <span class="gradient-text">& Tools</span></h2>
+                    <p class="text-gray-400 mb-8">Specialized in building end-to-end intelligent systems from foundational research to production-ready deployments.</p>
+                </div>
+                <div class="md:w-2/3 grid grid-cols-2 md:grid-cols-3 gap-6">
+                    <div class="font-fira text-sm p-4 border border-gray-800 rounded bg-[#0a0a0c]">>> Fullstack Architecture</div>
+                    <div class="font-fira text-sm p-4 border border-gray-800 rounded bg-[#0a0a0c]">>> Agentic Frameworks</div>
+                    <div class="font-fira text-sm p-4 border border-gray-800 rounded bg-[#0a0a0c]">>> Autonomous Systems</div>
+                    <div class="font-fira text-sm p-4 border border-gray-800 rounded bg-[#0a0a0c]">>> Neural Logic Design</div>
+                    <div class="font-fira text-sm p-4 border border-gray-800 rounded bg-[#0a0a0c]">>> Tailwind CSS</div>
+                    <div class="font-fira text-sm p-4 border border-gray-800 rounded bg-[#0a0a0c]">>> Python / AI R&D</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Works Section -->
+    <section id="works" class="py-20 bg-[#0c0c0e]">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-end mb-12">
+                <h2 class="font-orbitron text-4xl font-bold">Selected <br> <span class="gradient-text">Works</span></h2>
+                <a href="#" class="font-fira text-[#00f2ff] border-b border-[#00f2ff]">View Archive</a>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="group relative overflow-hidden rounded-2xl border-glow card">
+                    <div class="p-8">
+                        <div class="text-[#00f2ff] font-fira mb-2">Research Paper / System</div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-4 uppercase">Autonomous Intelligence Translation</h3>
+                        <p class="text-gray-400 mb-6">A framework for translating complex AI logic into human-understandable pedagogical models.</p>
+                        <div class="flex space-x-3">
+                            <span class="text-xs px-2 py-1 bg-gray-800 rounded font-fira text-gray-400">#AgenticAI</span>
+                            <span class="text-xs px-2 py-1 bg-gray-800 rounded font-fira text-gray-400">#NeuralLogic</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="group relative overflow-hidden rounded-2xl border-glow card">
+                    <div class="p-8">
+                        <div class="text-[#00f2ff] font-fira mb-2">Fullstack Platform</div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-4 uppercase">Pedagogical AI Architect</h3>
+                        <p class="text-gray-400 mb-6">High-performance architecture designed to serve as an intelligent assistant for academic researchers.</p>
+                        <div class="flex space-x-3">
+                            <span class="text-xs px-2 py-1 bg-gray-800 rounded font-fira text-gray-400">#Fullstack</span>
+                            <span class="text-xs px-2 py-1 bg-gray-800 rounded font-fira text-gray-400">#Research</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-6 text-center">
+            <div class="card max-w-2xl mx-auto p-12 rounded-3xl border-glow">
+                <h2 class="font-orbitron text-4xl font-bold mb-6">Get In <span class="gradient-text">Touch</span></h2>
+                <p class="text-gray-400 mb-10">Interested in collaborating on AI research or autonomous system architecture? Let's connect.</p>
+                <div class="font-fira text-[#00f2ff] text-xl mb-8">
+                    <a href="mailto:hello@karun.ai" class="hover:underline">hello@karun.ai</a>
+                </div>
+                <div class="flex justify-center space-x-6">
+                    <a href="https://github.com/karun99" target="_blank" class="text-gray-500 hover:text-white transition">GitHub</a>
+                    <a href="#" class="text-gray-500 hover:text-white transition">LinkedIn</a>
+                    <a href="https://karun99.github.io/" target="_blank" class="text-gray-500 hover:text-white transition">Original Site</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 text-center text-gray-600 font-fira text-sm">
+        <p>© 2026 Sai Karun Nandipati. Built with AI & precision logic.</p>
+    </footer>
+
+    <script>
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

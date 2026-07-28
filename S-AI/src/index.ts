@@ -1,0 +1,11 @@
+export { Swarm } from './swarm/index.js';
+export { Agent } from './swarm/agent.js';
+export { createProvider, getActiveProviderInstance, listProviders } from './providers/index.js';
+export { getConfig, updateConfig, getActiveProvider, getNeuralConfig } from './config.js';
+export { KnowledgeGraph, getKnowledgeGraph } from './memory/graph.js';
+export { CrawlEngine, getCrawlEngine } from './tools/crawl.js';
+export { createSwarmMcpServer, startStdioMcp } from './mcp/server.js';
+export { getMcpClientManager } from './mcp/client.js';
+export { NeuralMap, getNeuralMap } from './neural/index.js';
+export type { SAIConfig, ProviderConfig, SwarmConfig, CrawlConfig, McpConfig, NeuralMapConfig } from './config.js';
+export type { PersonaProfile, CognitiveTrait, CommunicationStyle, ContextNode as NeuralContextNode } from './neural/index.js';

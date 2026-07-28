@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Recipe Database — Royal Mutton Hub</title>
+<meta name="description" content="Browse, search, and share mutton recipes. Budget-friendly Indian recipes with real INR pricing from Royal Mutton Hub, Vijayawada.">
+<meta property="og:title" content="Recipe Database — Royal Mutton Hub">
+<meta property="og:description" content="Browse, search, and share budget-friendly mutton recipes with real INR pricing.">
+<meta property="og:url" content="https://royal-mutton-hub.netlify.app/recipedb.html">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://royal-mutton-hub.netlify.app/recipedb.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐑</text></svg>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#d4a017;--bg:#0a0a0a;--card-bg:#111;--text:#f1f5f9;--muted:#94a3b8;--radius:14px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+img{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+body{font-family:'Inter','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--primary);text-decoration:none}
+img{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+.container{max-width:1150px;margin:0 auto;padding:0 20px}
+.section{padding:40px 0}
+.site-header{background:var(--card-bg);border-bottom:1px solid rgba(212,160,23,0.1);padding:14px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.site-header .container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.site-header h1{font-size:1.15rem;color:var(--primary);display:flex;align-items:center;gap:8px}
+.site-header nav{display:flex;gap:12px;font-size:0.82rem}
+.site-header nav a{padding:6px 12px;border-radius:8px;transition:all 0.2s}
+.site-header nav a:hover{background:rgba(212,160,23,0.1)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border:none;border-radius:var(--radius);font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.3s;font-family:inherit}
+.btn-primary{background:var(--primary);color:#0a0a0a}
+.btn-primary:hover{background:#c08e10;transform:translateY(-2px)}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-outline:hover{background:var(--primary);color:#0a0a0a}
+.btn-success{background:#22c55e;color:#fff}
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:16px;background:var(--card-bg);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);margin-bottom:20px}
+.filter-bar input,.filter-bar select{padding:9px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:0.82rem;min-width:130px}
+.filter-bar input:focus,.filter-bar select:focus{border-color:var(--primary);outline:none}
+.filter-bar input{flex:1;min-width:180px}
+.recipes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.recipe-card{background:var(--card-bg);border:1px solid rgba(212,160,23,0.1);border-radius:var(--radius);overflow:hidden;transition:all 0.3s;cursor:pointer}
+.recipe-card:hover{border-color:rgba(212,160,23,0.3);transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+.recipe-card-body{padding:18px}
+.recipe-card-badge{display:inline-block;padding:3px 12px;border-radius:50px;font-size:0.7rem;font-weight:600;background:rgba(212,160,23,0.12);color:var(--primary);margin-bottom:8px}
+.recipe-card h3{font-size:1rem;font-weight:700;margin-bottom:4px;color:var(--text)}
+.recipe-card-author{font-size:0.78rem;color:var(--muted);margin-bottom:4px}
+.recipe-card-author i{color:var(--primary);margin-right:4px}
+.recipe-card-meta{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0;font-size:0.78rem;color:var(--muted)}
+.recipe-card-meta span{display:flex;align-items:center;gap:4px}
+.recipe-card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
+.empty-state i{font-size:2.5rem;display:block;margin-bottom:12px;color:#333}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all 0.3s}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal-content{background:var(--card-bg);border:1px solid rgba(212,160,23,0.15);border-radius:var(--radius);max-width:700px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;position:relative}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;padding:4px 8px;line-height:1}
+.modal-close:hover{color:var(--text)}
+.modal-meta{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 14px;font-size:0.82rem;color:var(--muted)}
+.modal-meta span{display:flex;align-items:center;gap:6px}
+.modal-section{margin-bottom:16px}
+.modal-section h4{color:var(--primary);font-size:0.9rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.modal-section ul,.modal-section ol{padding-left:20px;font-size:0.85rem;color:#cbd5e1;line-height:1.9}
+.modal-tips{background:rgba(212,160,23,0.06);border-left:3px solid var(--primary);padding:12px 14px;border-radius:0 12px 12px 0;margin:14px 0;font-size:0.85rem;color:var(--muted)}
+.difficulty-easy{color:#22c55e;background:rgba(34,197,94,0.08);padding:2px 8px;border-radius:6px}
+.difficulty-medium{color:#f59e0b;background:rgba(245,158,11,0.08);padding:2px 8px;border-radius:6px}
+.difficulty-hard{color:#ef4444;background:rgba(239,68,68,0.08);padding:2px 8px;border-radius:6px}
+.recipe-form-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all 0.3s}
+.recipe-form-overlay.active{opacity:1;visibility:visible}
+.recipe-form-content{background:var(--card-bg);border:1px solid rgba(212,160,23,0.15);border-radius:var(--radius);max-width:650px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;position:relative}
+.recipe-form-content h2{font-size:1.2rem;color:var(--primary);margin-bottom:4px}
+.form-subtitle{font-size:0.82rem;color:var(--muted);margin-bottom:18px}
+.recipe-form,.form-success{display:flex;flex-direction:column;gap:10px}
+.form-success{display:none;text-align:center;padding:40px 20px}
+.form-success.active{display:flex}
+.form-success i{font-size:3rem;color:#22c55e;margin-bottom:12px}
+.form-success h3{font-size:1.2rem}
+.recipe-form label{font-size:0.82rem;font-weight:600;color:var(--text);margin-top:4px}
+.recipe-form .form-hint{font-weight:400;color:var(--muted);font-size:0.72rem}
+.recipe-form input,.recipe-form select,.recipe-form textarea{padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text);font-family:inherit;font-size:0.85rem}
+.recipe-form input:focus,.recipe-form select:focus,.recipe-form textarea:focus{border-color:var(--primary);outline:none}
+.recipe-form textarea{min-height:60px;resize:vertical}
+.ingredients-ta{min-height:100px!important}
+.form-row{display:flex;gap:12px;flex-wrap:wrap}
+.form-row>div{flex:1;min-width:140px}
+.footer-text{text-align:center;padding:24px 0;font-size:0.78rem;color:#475569;border-top:1px solid rgba(255,255,255,0.04);margin-top:30px}
+.footer-text a{color:var(--primary)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+@media(max-width:768px){
+.section{padding:30px 0}.section-subtitle{margin-bottom:16px}
+.recipes-grid{grid-template-columns:1fr}
+.modal-content{padding:20px;margin:10px}.recipe-form-content{padding:20px}
+.filter-bar{flex-direction:column}.filter-bar input,.filter-bar select{width:100%;min-width:0}
+.hero h1{font-size:clamp(1.6rem,6vw,2.2rem)}
+}
+@media(max-width:480px){
+.container{padding:0 12px}.section{padding:20px 0}
+.navbar{padding:0 12px}.navbar-logo span{font-size:0.9rem}
+.modal-content{padding:14px;max-height:85vh}.modal-content h2{font-size:1.1rem}
+.recipe-form-content{padding:14px}.recipe-form .form-row{flex-direction:column}
+.badge{font-size:0.72rem;padding:4px 10px}.recipe-card-body{padding:14px}
+.recipe-card-footer{flex-direction:column;gap:6px}
+.share-btn{width:38px;height:38px;border-radius:50%;border:none;color:#fff;cursor:pointer;font-size:0.95rem;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.25s cubic-bezier(.4,0,.2,1);flex-shrink:0}
+.share-btn:hover{transform:scale(1.18);box-shadow:0 6px 20px rgba(0,0,0,0.35)}
+.share-btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <h1><i class="fas fa-crown" style="color:var(--primary);"></i> Recipe Database</h1>
+    <nav>
+      <a href="/"><i class="fas fa-home"></i> Home</a>
+      <a href="/RecipeDB/"><i class="fas fa-book"></i> RecipeDB Pages</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:24px">
+      <p style="color:var(--muted);font-size:0.9rem;max-width:600px;margin:0 auto">Browse budget-friendly recipes from our kitchen and famous Indian chefs. All prices in INR. Filter by diet, budget, cuisine, and more.</p>
+    </div>
+
+    <div class="filter-bar">
+      <input type="text" id="recipeSearch" placeholder="Search recipes or ingredients..." oninput="filterRecipes()">
+      <select id="recipeDietFilter" onchange="filterRecipes()"><option value="">All Diet</option><option value="veg">Veg</option><option value="non-veg">Non-Veg</option></select>
+      <select id="recipeBudgetFilter" onchange="filterRecipes()"><option value="">All Budget</option><option value="low">Low (₹)</option><option value="medium">Medium (₹₹)</option><option value="high">High (₹₹₹)</option></select>
+      <select id="recipeCuisineFilter" onchange="filterRecipes()"><option value="">All Cuisine</option><option>Andhra</option><option>Hyderabadi</option><option>North Indian</option><option>Mughlai</option><option>Kashmiri</option><option>South Indian</option></select>
+      <select id="recipeMealFilter" onchange="filterRecipes()"><option value="">All Meal Type</option><option>Lunch/Dinner</option><option>Snacks</option></select>
+      <select id="recipeCategoryFilter" onchange="filterRecipes()"><option value="">All Category</option><option>Biryani</option><option>Curry</option><option>Starter</option><option>Kebab</option><option>Soup</option><option>Dal</option></select>
+      <button class="btn btn-primary" onclick="openRecipeForm()"><i class="fas fa-plus"></i> Share Recipe</button>
+    </div>
+
+    <div class="recipes-grid" id="recipeGrid"></div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="recipeModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeRecipeModal()">&times;</button>
+    <div id="recipeModalBody"></div>
+  </div>
+</div>
+
+<!-- FORM OVERLAY -->
+<div class="recipe-form-overlay" id="recipeFormOverlay">
+  <div class="recipe-form-content">
+    <button class="modal-close" onclick="closeRecipeForm()">&times;</button>
+    <div id="recipeFormBody">
+      <h2><i class="fas fa-utensils"></i> Share Your Recipe</h2>
+      <p class="form-subtitle">Love cooking? Share your recipe with our community. Budget-friendly recipes encouraged!</p>
+      <form class="recipe-form" id="recipeForm">
+        <label>Your Name *</label>
+        <input type="text" id="rName" placeholder="e.g. Suresh Kumar" required>
+        <label>Recipe Name *</label>
+        <input type="text" id="rRecipeName" placeholder="e.g. Chettinad Mutton Curry" required>
+        <div class="form-row">
+          <div><label>Type *</label><select id="rDiet" required><option value="">Select</option><option value="veg">Veg</option><option value="non-veg">Non-Veg</option></select></div>
+          <div><label>Cuisine *</label><select id="rCuisine" required><option value="">Select</option><option>Andhra</option><option>Hyderabadi</option><option>North Indian</option><option>Mughlai</option><option>Chettinad</option><option>Other</option></select></div>
+          <div><label>Meal Type *</label><select id="rMeal" required><option value="">Select</option><option>Breakfast</option><option>Lunch/Dinner</option><option>Snacks</option><option>Dessert</option></select></div>
+        </div>
+        <div class="form-row">
+          <div><label>Category *</label><select id="rCategory" required><option value="">Select</option><option>Biryani</option><option>Curry</option><option>Dal</option><option>Kebab</option><option>Soup</option><option>Starter</option><option>Other</option></select></div>
+          <div><label>Budget *</label><select id="rBudget" required><option value="">Select</option><option value="low">Low (under ₹200)</option><option value="medium">Medium (₹200-500)</option><option value="high">High (₹500+)</option></select></div>
+          <div><label>Estimated Cost</label><input type="text" id="rCost" placeholder="e.g. ₹150-200"></div>
+        </div>
+        <div class="form-row">
+          <div><label>Servings *</label><input type="number" id="rServings" placeholder="4" min="1" required></div>
+          <div><label>Difficulty *</label><select id="rDifficulty" required><option value="">Select</option><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
+          <div><label>Prep Time *</label><input type="text" id="rPrep" placeholder="e.g. 20 min" required></div>
+          <div><label>Cook Time *</label><input type="text" id="rCook" placeholder="e.g. 45 min" required></div>
+        </div>
+        <label>Inspired by Chef <span class="form-hint">(optional)</span></label>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;padding:4px 0 8px;">
+          <label style="font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:4px;cursor:pointer;">
+            <input type="checkbox" id="rChefInspired" onchange="var c=this.checked;document.getElementById('rChefName').style.display=c?'inline-block':'none';document.getElementById('rChefSource').style.display=c?'inline-block':'none';"> ✨ Inspired by a chef
+          </label>
+          <select id="rChefName" style="display:none;padding:6px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text);font-family:inherit;font-size:0.82rem;">
+            <option value="">Select Chef</option>
+            <option value="sanjeevKapoor">Chef Sanjeev Kapoor</option>
+            <option value="ranveerBrar">Chef Ranveer Brar</option>
+            <option value="kunalKapur">Chef Kunal Kapur</option>
+            <option value="tarlaDalal">Tarla Dalal</option>
+            <option value="nishaMadhulika">Nisha Madhulika</option>
+            <option value="vahChef">VahChef (Sanjay Thumma)</option>
+            <option value="hebbar">Hebbar's Kitchen</option>
+            <option value="swasthi">Swasthi's Recipes</option>
+          </select>
+          <input type="url" id="rChefSource" placeholder="Original recipe URL (optional)" style="display:none;flex:1;min-width:200px;padding:8px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text);font-family:inherit;font-size:0.82rem;">
+        </div>
+        <label>Dietary Info <span class="form-hint">(tick all that apply)</span></label>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;padding:4px 0 2px;">
+          <label style="font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="rRestGluten" value="gluten-free"> 🌾 Gluten-Free</label>
+          <label style="font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="rRestDairy" value="dairy-free"> 🥛 Dairy-Free</label>
+          <label style="font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="rRestNut" value="nut-free"> 🥜 Nut-Free</label>
+          <label style="font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="rRestEgg" value="egg-free"> 🥚 Egg-Free</label>
+          <label style="font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="rRestVegan" value="vegan"> 🌱 Vegan</label>
+        </div>
+        <label>Ingredients * <span class="form-hint">(one per line)</span></label>
+        <textarea class="ingredients-ta" id="rIngredients" placeholder="500g mutton (bone-in)&#10;2 onions (chopped)&#10;..." required></textarea>
+        <label>Instructions * <span class="form-hint">(one step per line)</span></label>
+        <textarea class="ingredients-ta" id="rSteps" placeholder="Heat oil and saute onions until golden.&#10;Add ginger-garlic paste and cook for 1 min.&#10;..." required></textarea>
+        <label>Tips <span class="form-hint">(optional)</span></label>
+        <textarea id="rTips" placeholder="Any cooking tips or budget-saving tricks..." rows="2"></textarea>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Recipe</button>
+      </form>
+      <div class="form-success" id="recipeFormSuccess">
+        <i class="fas fa-check-circle"></i>
+        <h3>Recipe Submitted!</h3>
+        <p>Thank you for sharing your recipe. It will appear on this page.</p>
+        <button class="btn btn-primary" onclick="closeRecipeForm()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-text">
+      &copy; 2026 Royal Mutton Hub — An indigenous Vijayawada brand | <a href="/">Home</a> | <a href="/RecipeDB/">RecipeDB Pages</a> | Developed by <a href="http://guidingkey.com" target="_blank" rel="noopener noreferrer">Guiding Key</a>
+    </div>
+  </div>
+</footer>
+
+<script src="utils.js"></script>
+<script src="embed.js" defer></script>
+<script>
+/* ── Recipe Database ───────────────────────────────── */
+// ── Anti-bot & copy protection ──
+(function(){
+  document.addEventListener('contextmenu',function(e){e.preventDefault()});
+  document.addEventListener('selectstart',function(e){e.preventDefault()});
+  document.addEventListener('copy',function(e){e.preventDefault()});
+  document.addEventListener('cut',function(e){e.preventDefault()});
+  document.addEventListener('dragstart',function(e){e.preventDefault()});
+  document.addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey){if([67,85,83,80,73,74,89,65,70,69,72].indexOf(e.keyCode)>=0)e.preventDefault()}
+    if(e.keyCode===123)e.preventDefault()
+  });
+  setInterval(function(){
+    var w=window.outerWidth-window.innerWidth,h=window.outerHeight-window.innerHeight;
+    if(w>200||h>200){
+      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0a0a0a;color:#f1f5f9;text-align:center;padding:20px;font-family:sans-serif"><div><h1 style="color:#d4a017;font-size:1.5rem;margin-bottom:10px;">Developer Tools Detected</h1><p style="color:#94a3b8;font-size:0.9rem;">This site is protected. Please close developer tools.</p></div></div>'
+    }
+  },2000);
+})();
+var CHEF_CREDITS_MAP = {
+  sanjeevKapoor: { badge: '👨‍🍳 Sanjeev Kapoor' },
+  ranveerBrar: { badge: '👨‍🍳 Ranveer Brar' },
+  kunalKapur: { badge: '👨‍🍳 Kunal Kapur' },
+  tarlaDalal: { badge: '👩‍🍳 Tarla Dalal' },
+  nishaMadhulika: { badge: '👩‍🍳 Nisha Madhulika' },
+  vahChef: { badge: '👨‍🍳 VahChef' },
+  hebbar: { badge: '👩‍🍳 Hebbar\'s Kitchen' },
+  swasthi: { badge: '👩‍🍳 Swasthi\'s Recipes' }
+};
+
+function getAllRecipes() {
+  var seed = (__RMH.BUSINESS.recipes || []).slice();
+  try {
+    var stored = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []);
+    stored.forEach(function(r) { if (!seed.find(function(s) { return s.id === r.id; })) seed.push(r); });
+  } catch(e) {}
+  return seed;
+}
+
+function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>"']/g, function(c) { return '&#' + c.charCodeAt(0) + ';'; }); }
+
+function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+function safeShareText(str) { return encodeURIComponent(str); }
+function safeShareUrl(str) { return encodeURIComponent(str); }
+
+// ── Appreciation ──
+function getAppreciation(recipeId) {
+  try { var d = __RMH.safeParse(localStorage.getItem('rmh_appreciation'), {}); return d[recipeId] || { cooked:0, ratings:[] }; } catch(e) { return { cooked:0, ratings:[] }; }
+}
+function cookedIt(recipeId) {
+  try {
+    var d = __RMH.safeParse(localStorage.getItem('rmh_appreciation'), {});
+    if (!d[recipeId]) d[recipeId] = { cooked:0, ratings:[] };
+    d[recipeId].cooked = (d[recipeId].cooked || 0) + 1;
+    localStorage.setItem('rmh_appreciation', JSON.stringify(d));
+    filterRecipes();
+  } catch(e) {}
+}
+function rateRecipe(recipeId, stars) {
+  try {
+    var d = __RMH.safeParse(localStorage.getItem('rmh_appreciation'), {});
+    if (!d[recipeId]) d[recipeId] = { cooked:0, ratings:[] };
+    if (!d[recipeId].ratings) d[recipeId].ratings = [];
+    d[recipeId].ratings.push(stars);
+    localStorage.setItem('rmh_appreciation', JSON.stringify(d));
+    filterRecipes();
+    closeRecipeModal();
+    setTimeout(function() { openRecipeModal(recipeId); }, 100);
+  } catch(e) {}
+}
+function avgRating(recipeId) {
+  var a = getAppreciation(recipeId);
+  if (!a.ratings || a.ratings.length === 0) return 0;
+  var sum = a.ratings.reduce(function(s,v) { return s+v; }, 0);
+  return Math.round(sum / a.ratings.length * 10) / 10;
+}
+function starHtml(recipeId, active) {
+  var h = '';
+  for (var i = 1; i <= 5; i++) { h += '<span style="cursor:pointer;font-size:1.1rem;color:' + (i <= active ? '#fbbf24' : '#475569') + ';" onclick="rateRecipe(\'' + recipeId + '\',' + i + ')" title="Rate ' + i + ' stars">&#9733;</span>'; }
+  return h;
+}
+function getReviews(recipeId){try{var d=__RMH.safeParse(localStorage.getItem('rmh_reviews'),{});return d[recipeId]||[];}catch(e){return[];}}
+function submitReview(recipeId){var ni=document.getElementById('revName_'+recipeId),ti=document.getElementById('revText_'+recipeId);if(!ni||!ti||!ni.value.trim()||!ti.value.trim()){showToast('Enter your name and review.');return;}try{var d=__RMH.safeParse(localStorage.getItem('rmh_reviews'),{});if(!d[recipeId])d[recipeId]=[];d[recipeId].unshift({name:ni.value.trim(),text:ti.value.trim(),date:Date.now()});localStorage.setItem('rmh_reviews',JSON.stringify(d));ni.value='';ti.value='';showToast('Review posted!');closeRecipeModal();setTimeout(function(){openRecipeModal(recipeId);},100);}catch(e){showToast('Error posting review.');}}
+function showToast(msg){var t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#f8fafc;padding:10px 24px;border-radius:12px;font-size:0.85rem;z-index:10000;opacity:0;transition:opacity 0.3s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.3);';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';setTimeout(function(){t.style.opacity='0';},2500);}
+function shareViaWebAPI(text,url){if(navigator.share){navigator.share({title:'Recipe from Royal Mutton Hub',text:text,url:url}).catch(function(){});}else{showToast('Use a share button below');}}
+function copyLink(url){navigator.clipboard.writeText(url).then(function(){showToast('Link copied!');}).catch(function(){showToast('Could not copy link');});}
+
+// ── Filter & Render ──
+function filterRecipes() {
+  var grid = document.getElementById('recipeGrid');
+  var search = (document.getElementById('recipeSearch').value || '').toLowerCase();
+  var dietF = document.getElementById('recipeDietFilter').value;
+  var budgetF = document.getElementById('recipeBudgetFilter').value;
+  var cuisineF = document.getElementById('recipeCuisineFilter').value;
+  var mealF = document.getElementById('recipeMealFilter').value;
+  var catF = document.getElementById('recipeCategoryFilter').value;
+  var recipes = getAllRecipes();
+
+  var filtered = recipes.filter(function(r) {
+    if (dietF && r.diet !== dietF) return false;
+    if (budgetF && r.budget !== budgetF) return false;
+    if (cuisineF && r.cuisine !== cuisineF) return false;
+    if (mealF && r.mealType !== mealF) return false;
+    if (catF && r.category !== catF) return false;
+    if (search) {
+      var haystack = (r.name + ' ' + r.author + ' ' + (r.ingredients || []).join(' ') + ' ' + (r.category || '')).toLowerCase();
+      if (haystack.indexOf(search) < 0) return false;
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i>No recipes match your filters. Try adjusting your search.</div>';
+    return;
+  }
+
+  function dietLabel(d) { return d === 'veg' ? '🌱 Veg' : '🥩 Non-Veg'; }
+  function budgetLabel(b) { return b === 'low' ? '₹ Low' : b === 'medium' ? '₹₹ Medium' : '₹₹₹ High'; }
+  function restrictionBadges(r) {
+    if (!r || r.length === 0) return '';
+    var icons = { 'vegan':'🌱','gluten-free':'🌾','dairy-free':'🥛','nut-free':'🥜','egg-free':'🥚' };
+    return r.map(function(x) { return '<span style="font-size:0.65rem;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,0.05);margin-right:4px;" title="' + x + '">' + (icons[x]||'') + escapeHtml(x.replace('-free','').replace('-',' ')) + '</span>'; }).join('');
+  }
+
+  grid.innerHTML = filtered.map(function(r) {
+    var diffClass = 'difficulty-' + r.difficulty.toLowerCase();
+    var diffIcon = r.difficulty.toLowerCase() === 'easy' ? '&#128994;' : (r.difficulty.toLowerCase() === 'medium' ? '&#128993;' : '&#128308;');
+    var isUserRecipe = r.id.indexOf('user_') === 0;
+    var detailUrl = isUserRecipe ? 'javascript:openRecipeModal(\'' + r.id + '\')' : 'RecipeDB/' + slugify(r.name) + '.html';
+    var target = isUserRecipe ? '' : ' target="_blank"';
+    var clickHandler = isUserRecipe ? '' : ' onclick="openRecipeModal(\'' + r.id + '\')"';
+    var pageUrl = isUserRecipe ? window.location.href + '?recipe=' + r.id : 'https://royal-mutton-hub.netlify.app/RecipeDB/' + slugify(r.name) + '.html';
+    var shareText = safeShareText(r.name + ' - Recipe from Royal Mutton Hub. Try it!');
+    var shareUrl = safeShareUrl(pageUrl);
+    var costDisplay = r.costEstimate || '';
+    var imgEmoji = r.image || '&#127858;';
+    var equipmentStr = r.equipment && r.equipment.length > 0 ? r.equipment.slice(0,2).join(', ') + (r.equipment.length > 2 ? '...' : '') : '';
+    var _appr = getAppreciation(r.id);
+    var cookedStr = _appr.cooked > 0 ? '<span style="font-size:0.7rem;color:#22c55e;">&#127859; ' + _appr.cooked + '</span>' : '';
+    var chefBadge = '';
+    if (r.chefKey && CHEF_CREDITS_MAP[r.chefKey]) {
+      chefBadge = '<div style="font-size:0.7rem;color:#d4a017;margin:2px 0 4px;">' + CHEF_CREDITS_MAP[r.chefKey].badge + (r.sourceUrl ? ' <a href="' + r.sourceUrl + '" target="_blank" rel="noopener noreferrer" style="font-size:0.6rem;color:#64748b;text-decoration:none;">(source)</a>' : '') + '</div>';
+    }
+    return '<div class="recipe-card"' + clickHandler + '><div class="recipe-card-body"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;"><span class="recipe-card-badge">' + escapeHtml(r.category) + '</span><span class="recipe-card-badge" style="font-size:0.65rem;">' + dietLabel(r.diet) + '</span><span class="recipe-card-badge" style="font-size:0.65rem;background:rgba(212,160,23,0.06);">' + escapeHtml(r.cuisine) + '</span></div><div style="font-size:2.2rem;text-align:center;margin:4px 0 8px;line-height:1;">' + imgEmoji + '</div><h3>' + escapeHtml(r.name) + '</h3><div class="recipe-card-author"><i class="fas fa-user"></i>' + escapeHtml(r.author) + ' <span style="color:#64748b;">| ' + escapeHtml(r.mealType) + '</span></div>' + chefBadge + '<div class="recipe-card-meta"><span><i class="far fa-clock"></i> ' + escapeHtml(r.prep) + '</span><span><i class="far fa-clock"></i> ' + escapeHtml(r.cook) + '</span>' + (costDisplay ? '<span><i class="fas fa-money-bill-wave" style="color:#22c55e;"></i> ' + escapeHtml(costDisplay) + '</span>' : '') + '</div><div class="recipe-card-footer"><span class="' + diffClass + '">' + diffIcon + ' ' + escapeHtml(r.difficulty) + '</span><div style="display:flex;gap:6px;align-items:center;"><span style="font-size:0.7rem;color:#22c55e;">' + budgetLabel(r.budget) + '</span><a href="' + detailUrl + '"' + target + ' style="font-size:0.78rem;color:var(--primary);text-decoration:none;display:flex;align-items:center;gap:4px;" onclick="if(!event.target.closest(\'.recipe-card\')){event.stopPropagation();openRecipeModal(\'' + r.id + '\')}"><i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i> View</a></div></div><div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;font-size:0.7rem;color:#64748b;">' + (equipmentStr ? '&#128295; ' + escapeHtml(equipmentStr) : '') + '</div><div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.04);display:flex;gap:6px;justify-content:space-between;align-items:center;"><div style="display:flex;gap:4px;align-items:center;">' + restrictionBadges(r.restrictions) + ' ' + cookedStr + '</div><div style="display:flex;gap:4px;"><a href="https://wa.me/?text=' + shareText + '%20' + shareUrl + '" target="_blank" rel="noopener noreferrer" style="font-size:0.7rem;color:#25D366;text-decoration:none;" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.facebook.com/sharer/sharer.php?u=' + shareUrl + '" target="_blank" rel="noopener noreferrer" style="font-size:0.7rem;color:#1877F2;text-decoration:none;" title="Facebook"><i class="fab fa-facebook"></i></a><a href="https://twitter.com/intent/tweet?text=' + shareText + '&url=' + shareUrl + '" target="_blank" rel="noopener noreferrer" style="font-size:0.7rem;color:#fff;text-decoration:none;" title="X"><i class="fab fa-twitter"></i></a><a href="mailto:?subject=' + safeShareText(r.name + ' - Recipe') + '&body=' + safeShareText('Check out this recipe: ' + r.name + '\n\n' + pageUrl) + '" style="font-size:0.7rem;color:#64748b;text-decoration:none;" title="Email"><i class="fas fa-envelope"></i></a></div></div></div></div>';
+  }).join('');
+}
+
+// ── Modal ──
+function openRecipeModal(id) {
+  var recipes = getAllRecipes();
+  var r = recipes.find(function(x) { return x.id === id; });
+  if (!r) return;
+  var isUserRecipe = r.id.indexOf('user_') === 0;
+  var diffClass = 'difficulty-' + r.difficulty.toLowerCase();
+  var pageUrl = isUserRecipe ? window.location.href + '?recipe=' + r.id : 'https://royal-mutton-hub.netlify.app/RecipeDB/' + slugify(r.name) + '.html';
+  var shareText = safeShareText(r.name + ' - Mutton recipe from Royal Mutton Hub. Try it!');
+  var shareUrl = safeShareUrl(pageUrl);
+  var dietIcon = r.diet === 'veg' ? '<span style="color:#22c55e;">&#127793; Veg</span>' : '<span style="color:#ef4444;">&#127853; Non-Veg</span>';
+  var costDisplay = r.costEstimate ? '<span><i class="fas fa-money-bill-wave" style="color:#22c55e;"></i> ' + escapeHtml(r.costEstimate) + '</span>' : '';
+  var imgEmoji = r.image || '&#127858;';
+  var restrictionsHtml = '';
+  if (r.restrictions && r.restrictions.length > 0) {
+    var icons = { 'vegan':'🌱','gluten-free':'🌾','dairy-free':'🥛','nut-free':'🥜','egg-free':'🥚' };
+    restrictionsHtml = r.restrictions.map(function(x) { return '<span style="display:inline-block;padding:2px 10px;border-radius:6px;background:rgba(255,255,255,0.05);font-size:0.75rem;margin-right:4px;margin-bottom:4px;">' + (icons[x]||'') + ' ' + escapeHtml(x.replace('-free','').replace('-',' ')) + ' friendly</span>'; }).join('');
+  } else { restrictionsHtml = '<span style="font-size:0.78rem;color:#94a3b8;">No specific restrictions</span>'; }
+
+  var html = '<div style="font-size:3rem;text-align:center;margin-bottom:8px;line-height:1;">' + imgEmoji + '</div>';
+  html += '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:6px;"><span class="recipe-card-badge">' + escapeHtml(r.category) + '</span><span class="recipe-card-badge" style="font-size:0.75rem;">' + dietIcon + '</span><span class="recipe-card-badge" style="font-size:0.75rem;background:rgba(212,160,23,0.06);">' + escapeHtml(r.cuisine) + '</span><span class="recipe-card-badge" style="font-size:0.75rem;">' + escapeHtml(r.mealType) + '</span></div>';
+  html += '<h2 style="text-align:center;font-size:1.2rem;">' + escapeHtml(r.name) + '</h2>';
+  html += '<p style="text-align:center;font-size:0.82rem;color:var(--muted);margin-bottom:4px;"><i class="fas fa-user" style="color:var(--primary);margin-right:4px;"></i>' + escapeHtml(r.author) + '</p>';
+  if (r.chefKey && CHEF_CREDITS_MAP[r.chefKey]) {
+    html += '<p style="text-align:center;font-size:0.72rem;color:#d4a017;margin-bottom:10px;">' + CHEF_CREDITS_MAP[r.chefKey].badge + (r.sourceUrl ? ' <a href="' + escapeHtml(r.sourceUrl) + '" target="_blank" rel="noopener noreferrer" style="color:#64748b;font-size:0.7rem;text-decoration:none;">(source)</a>' : '') + '</p>';
+  }
+  html += '<div class="modal-meta" style="justify-content:center;"><span><i class="far fa-clock"></i> Prep: ' + escapeHtml(r.prep) + '</span><span><i class="far fa-clock"></i> Cook: ' + escapeHtml(r.cook) + '</span><span><i class="fas fa-utensils"></i> ' + escapeHtml(r.servings) + ' servings</span><span class="' + diffClass + '"><i class="fas fa-signal"></i> ' + escapeHtml(r.difficulty) + '</span><span style="color:#22c55e;">&#128176; ' + r.budget.charAt(0).toUpperCase() + r.budget.slice(1) + ' Budget</span>' + costDisplay + '</div>';
+  html += '<div style="text-align:center;margin-bottom:14px;">' + restrictionsHtml + '</div>';
+
+  html += '<div class="modal-section"><h4><i class="fas fa-shopping-basket"></i> Ingredients</h4><ul>';
+  r.ingredients.forEach(function(i) { html += '<li>' + escapeHtml(i) + '</li>'; });
+  html += '</ul></div>';
+  html += '<div class="modal-section"><h4><i class="fas fa-list-ol"></i> Instructions</h4><ol>';
+  r.steps.forEach(function(s) { html += '<li>' + escapeHtml(s) + '</li>'; });
+  html += '</ol></div>';
+  if (r.tips) html += '<div class="modal-tips"><strong style="color:var(--primary);">&#128161; Tip:</strong> ' + escapeHtml(r.tips) + '</div>';
+
+  if (r.equipment && r.equipment.length > 0) {
+    html += '<div class="modal-section"><h4><i class="fas fa-tools"></i> Kitchen Equipment Needed</h4><div style="display:flex;flex-wrap:wrap;gap:6px;">';
+    r.equipment.forEach(function(e) { html += '<span style="display:inline-block;padding:4px 12px;border-radius:8px;background:rgba(255,255,255,0.05);font-size:0.8rem;color:#cbd5e1;">&#9881; ' + escapeHtml(e) + '</span>'; });
+    html += '</div></div>';
+  }
+
+  // Rating & appreciation
+  var appr = getAppreciation(r.id);
+  var avg = avgRating(r.id);
+  var cookedCount = appr.cooked || 0;
+  html += '<div class="modal-section" style="border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;margin-top:18px;">';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;">';
+  html += '<div style="text-align:center;"><div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px;">&#11088; Rate this recipe</div><div>' + starHtml(r.id, avg) + '</div><div style="font-size:0.7rem;color:#64748b;margin-top:2px;">' + (avg > 0 ? avg + ' / 5' : 'No ratings yet') + '</div></div>';
+  html += '<div style="text-align:center;"><button class="btn btn-primary" onclick="cookedIt(\'' + r.id + '\')" style="padding:8px 16px;font-size:0.78rem;"><i class="fas fa-utensils"></i> I Cooked This!</button><div style="font-size:0.72rem;color:#64748b;margin-top:4px;">' + (cookedCount > 0 ? cookedCount + ' people cooked this' : 'Be the first!') + '</div></div>';
+  html += '</div></div>';
+
+  // Reviews
+  html += '<div class="modal-section" style="border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;margin-top:18px;">';
+  html += '<h4 style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;">&#128221; Reviews</h4>';
+  html += '<div id="reviews_' + r.id + '" style="max-height:160px;overflow-y:auto;margin-bottom:8px;">';
+  var reviews = getReviews(r.id);
+  if (reviews.length > 0) {
+    reviews.forEach(function(rev) {
+      html += '<div style="padding:8px 10px;margin-bottom:6px;border-radius:8px;background:rgba(255,255,255,0.03);"><div style="display:flex;justify-content:space-between;align-items:center;font-size:0.75rem;"><strong style="color:var(--primary);">' + escapeHtml(rev.name) + '</strong><span style="color:#64748b;font-size:0.65rem;">' + new Date(rev.date).toLocaleDateString() + '</span></div><p style="font-size:0.78rem;color:#cbd5e1;margin:4px 0 0;line-height:1.4;">' + escapeHtml(rev.text) + '</p></div>';
+    });
+  } else {
+    html += '<p style="font-size:0.78rem;color:#64748b;text-align:center;padding:8px 0;">No reviews yet. Be the first!</p>';
+  }
+  html += '</div>';
+  html += '<div style="display:flex;gap:8px;"><input type="text" id="revName_' + r.id + '" placeholder="Your name" style="flex:1;min-width:100px;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#f8fafc;font-size:0.78rem;outline:none;"><button class="btn btn-primary" onclick="submitReview(\'' + r.id + '\')" style="padding:8px 14px;font-size:0.78rem;"><i class="fas fa-paper-plane"></i> Post</button></div>';
+  html += '<textarea id="revText_' + r.id + '" placeholder="Write your review..." style="width:100%;margin-top:6px;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#f8fafc;font-size:0.78rem;outline:none;resize:vertical;min-height:45px;box-sizing:border-box;"></textarea>';
+  html += '</div>';
+
+  // Share
+  html += '<div class="modal-section" style="border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;margin-top:18px;">';
+  html += '<h4 style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;">&#128228; Share</h4>';
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">';
+  html += '<button class="share-btn" style="background:#6366f1;" onclick="shareViaWebAPI(\'' + safeShareText(r.name) + '\',\'' + pageUrl.replace(/'/g,"\\'") + '\')" title="Share"><i class="fas fa-share-alt"></i></button>';
+  html += '<a class="share-btn" style="background:#25D366;" href="https://wa.me/?text=' + shareText + '%20' + shareUrl + '" target="_blank" rel="noopener noreferrer" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>';
+  html += '<a class="share-btn" style="background:#1877F2;" href="https://www.facebook.com/sharer/sharer.php?u=' + shareUrl + '" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="fab fa-facebook-f"></i></a>';
+  html += '<a class="share-btn" style="background:#000;" href="https://twitter.com/intent/tweet?text=' + shareText + '&url=' + shareUrl + '" target="_blank" rel="noopener noreferrer" title="X"><i class="fab fa-x-twitter"></i></a>';
+  html += '<a class="share-btn" style="background:#0088cc;" href="https://t.me/share/url?url=' + shareUrl + '&text=' + shareText + '" target="_blank" rel="noopener noreferrer" title="Telegram"><i class="fab fa-telegram-plane"></i></a>';
+  html += '<a class="share-btn" style="background:#64748b;" href="mailto:?subject=' + safeShareText(r.name + ' - Mutton Recipe') + '&body=' + safeShareText('Check out this recipe: ' + r.name + '\n\n' + pageUrl) + '" title="Email"><i class="fas fa-envelope"></i></a>';
+  html += '<button class="share-btn" style="background:#475569;" onclick="copyLink(\'' + pageUrl.replace(/'/g,"\\'") + '\')" title="Copy Link"><i class="fas fa-link"></i></button>';
+  if (!isUserRecipe) html += '<a class="share-btn share-btn-outline" href="' + pageUrl + '" target="_blank" title="Full Page"><i class="fas fa-external-link-alt"></i></a>';
+  html += '</div></div></div>';
+
+  document.getElementById('recipeModalBody').innerHTML = html;
+  document.getElementById('recipeModal').classList.add('active');
+}
+
+function closeRecipeModal() { document.getElementById('recipeModal').classList.remove('active'); }
+function openRecipeForm() { document.getElementById('recipeFormOverlay').classList.add('active'); document.getElementById('recipeFormBody').querySelector('.recipe-form').style.display = 'flex'; document.getElementById('recipeFormSuccess').classList.remove('active'); }
+function closeRecipeForm() { document.getElementById('recipeFormOverlay').classList.remove('active'); }
+
+// ── Init after DOM ready ──
+document.addEventListener('DOMContentLoaded', function() {
+  // Merge chef recipes (from utils.js mergeChefRecipes via deferred chef-recipes.js)
+  if (__RMH.mergeChefRecipes) {
+    __RMH.BUSINESS.recipes = __RMH.mergeChefRecipes();
+  }
+  filterRecipes();
+
+  if (document.getElementById('recipeForm')) {
+    document.getElementById('recipeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = document.getElementById('rName').value.trim(), rname = document.getElementById('rRecipeName').value.trim(), diet = document.getElementById('rDiet').value, cuisine = document.getElementById('rCuisine').value, meal = document.getElementById('rMeal').value, cat = document.getElementById('rCategory').value, budget = document.getElementById('rBudget').value, cost = document.getElementById('rCost').value.trim(), diff = document.getElementById('rDifficulty').value, prep = document.getElementById('rPrep').value.trim(), cook = document.getElementById('rCook').value.trim(), servings = document.getElementById('rServings').value;
+      var restrictions = [];
+      ['rRestGluten','rRestDairy','rRestNut','rRestEgg','rRestVegan'].forEach(function(id) { var el = document.getElementById(id); if (el && el.checked) restrictions.push(el.value); });
+      var ingreds = document.getElementById('rIngredients').value.trim().split('\n').filter(Boolean), steps = document.getElementById('rSteps').value.trim().split('\n').filter(Boolean), tips = document.getElementById('rTips').value.trim();
+      if (!name || !rname || !diet || !cuisine || !meal || !cat || !budget || !diff || !prep || !cook || !servings || ingreds.length < 2 || steps.length < 2) { alert('Please fill all required fields.'); return; }
+      try { var _now = Date.now(), _rl = __RMH.safeParse(localStorage.getItem('rmh_ratelimit'), {}), _ents = (_rl.recipe_submit || []).filter(function(t) { return _now - t < 3600000; }); if (_ents.length >= 3) { alert('Max 3 recipes per hour.'); return; } _ents.push(_now); _rl.recipe_submit = _ents; localStorage.setItem('rmh_ratelimit', JSON.stringify(_rl)); } catch(e) {}
+      var sanitize = function(str) { return String(str).replace(/<[^>]*>/g,'').replace(/[&<>"']/g,function(c){return '&#'+c.charCodeAt(0)+';';}); };
+      var newRecipe = { id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2,4), name: sanitize(rname), author: sanitize(name), category: sanitize(cat), cuisine: sanitize(cuisine), mealType: sanitize(meal), diet: diet, budget: budget, costEstimate: sanitize(cost || ''), restrictions: restrictions, image: '🍽', equipment: [], chefKey: document.getElementById('rChefInspired').checked ? document.getElementById('rChefName').value || null : null, sourceUrl: document.getElementById('rChefInspired').checked ? document.getElementById('rChefSource').value.trim() || null : null, prep: sanitize(prep), cook: sanitize(cook), difficulty: diff, servings: servings, ingredients: ingreds.map(sanitize), steps: steps.map(sanitize), tips: sanitize(tips || '') };
+      try { var existing = __RMH.safeParse(localStorage.getItem('rmh_recipes'), []); existing.push(newRecipe); localStorage.setItem('rmh_recipes', JSON.stringify(existing)); } catch(e) {}
+      document.getElementById('recipeFormBody').querySelector('.recipe-form').style.display = 'none';
+      document.getElementById('recipeFormSuccess').classList.add('active');
+      filterRecipes();
+      ['rName','rRecipeName','rDiet','rCuisine','rMeal','rCategory','rBudget','rCost','rDifficulty','rPrep','rCook'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      if (document.getElementById('rServings')) document.getElementById('rServings').value = '4';
+      document.getElementById('rIngredients').value = '';
+      document.getElementById('rSteps').value = '';
+      document.getElementById('rTips').value = '';
+    });
+  }
+});
+</script>
+</body>
+</html>

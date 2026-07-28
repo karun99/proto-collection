@@ -1,0 +1,322 @@
+[
+  {
+    "id": "prompts-for-teachers",
+    "name": "Prompts for Teachers",
+    "count": 1018,
+    "easy": 305,
+    "medium": 408,
+    "hard": 305
+  },
+  {
+    "id": "copywriting-ii",
+    "name": "Copywriting II",
+    "count": 995,
+    "easy": 297,
+    "medium": 400,
+    "hard": 298
+  },
+  {
+    "id": "etsy-success",
+    "name": "Etsy Success",
+    "count": 930,
+    "easy": 279,
+    "medium": 372,
+    "hard": 279
+  },
+  {
+    "id": "podcast-success",
+    "name": "Podcast Success",
+    "count": 904,
+    "easy": 273,
+    "medium": 360,
+    "hard": 271
+  },
+  {
+    "id": "amazon-success",
+    "name": "Amazon Success",
+    "count": 886,
+    "easy": 264,
+    "medium": 355,
+    "hard": 267
+  },
+  {
+    "id": "real-estate-for-professionals",
+    "name": "Real Estate for Professionals",
+    "count": 673,
+    "easy": 201,
+    "medium": 271,
+    "hard": 201
+  },
+  {
+    "id": "ebay-success",
+    "name": "Ebay Success",
+    "count": 651,
+    "easy": 196,
+    "medium": 260,
+    "hard": 195
+  },
+  {
+    "id": "dating-advice",
+    "name": "Dating Advice",
+    "count": 647,
+    "easy": 195,
+    "medium": 257,
+    "hard": 195
+  },
+  {
+    "id": "wedding-planner",
+    "name": "Wedding planner",
+    "count": 600,
+    "easy": 180,
+    "medium": 240,
+    "hard": 180
+  },
+  {
+    "id": "passive-income",
+    "name": "Passive Income",
+    "count": 434,
+    "easy": 131,
+    "medium": 172,
+    "hard": 131
+  },
+  {
+    "id": "mental-health-and-wellbeing",
+    "name": "Mental Health and Wellbeing",
+    "count": 400,
+    "easy": 120,
+    "medium": 160,
+    "hard": 120
+  },
+  {
+    "id": "photography-and-visual-storytelling",
+    "name": "Photography and Visual Storytelling",
+    "count": 400,
+    "easy": 120,
+    "medium": 160,
+    "hard": 120
+  },
+  {
+    "id": "mindfulness-and-meditation-practices",
+    "name": "Mindfulness and meditation practices",
+    "count": 350,
+    "easy": 105,
+    "medium": 140,
+    "hard": 105
+  },
+  {
+    "id": "personal-development",
+    "name": "Personal Development",
+    "count": 350,
+    "easy": 105,
+    "medium": 140,
+    "hard": 105
+  },
+  {
+    "id": "education",
+    "name": "Education",
+    "count": 300,
+    "easy": 90,
+    "medium": 120,
+    "hard": 90
+  },
+  {
+    "id": "cooking",
+    "name": "Cooking",
+    "count": 300,
+    "easy": 90,
+    "medium": 120,
+    "hard": 90
+  },
+  {
+    "id": "digital-nomad-lifestyle",
+    "name": "Digital Nomad Lifestyle",
+    "count": 300,
+    "easy": 90,
+    "medium": 120,
+    "hard": 90
+  },
+  {
+    "id": "saas-success",
+    "name": "SaaS Success",
+    "count": 300,
+    "easy": 90,
+    "medium": 120,
+    "hard": 90
+  },
+  {
+    "id": "course-creation",
+    "name": "Course creation",
+    "count": 276,
+    "easy": 84,
+    "medium": 109,
+    "hard": 83
+  },
+  {
+    "id": "ecommerce-and-online-sales",
+    "name": "E-commerce and online sales",
+    "count": 270,
+    "easy": 81,
+    "medium": 108,
+    "hard": 81
+  },
+  {
+    "id": "social-media-marketing",
+    "name": "Social media marketing",
+    "count": 259,
+    "easy": 78,
+    "medium": 104,
+    "hard": 77
+  },
+  {
+    "id": "email-marketing",
+    "name": "Email marketing",
+    "count": 250,
+    "easy": 75,
+    "medium": 100,
+    "hard": 75
+  },
+  {
+    "id": "mindful-parenting",
+    "name": "Mindful Parenting",
+    "count": 230,
+    "easy": 69,
+    "medium": 92,
+    "hard": 69
+  },
+  {
+    "id": "print-on-demand-pod",
+    "name": "Print on Demand (POD)",
+    "count": 224,
+    "easy": 66,
+    "medium": 89,
+    "hard": 69
+  },
+  {
+    "id": "branding-and-logo-design",
+    "name": "Branding and logo design",
+    "count": 214,
+    "easy": 66,
+    "medium": 85,
+    "hard": 63
+  },
+  {
+    "id": "content-creation",
+    "name": "Content creation",
+    "count": 209,
+    "easy": 63,
+    "medium": 84,
+    "hard": 62
+  },
+  {
+    "id": "productivity-and-time-management",
+    "name": "Productivity and Time Management",
+    "count": 207,
+    "easy": 63,
+    "medium": 84,
+    "hard": 60
+  },
+  {
+    "id": "seo-optimization",
+    "name": "SEO Optimization",
+    "count": 201,
+    "easy": 60,
+    "medium": 80,
+    "hard": 61
+  },
+  {
+    "id": "blogging",
+    "name": "Blogging",
+    "count": 200,
+    "easy": 60,
+    "medium": 80,
+    "hard": 60
+  },
+  {
+    "id": "copywriting-i",
+    "name": "Copywriting I",
+    "count": 200,
+    "easy": 60,
+    "medium": 80,
+    "hard": 60
+  },
+  {
+    "id": "writing-and-storytelling-prompts",
+    "name": "Writing and storytelling prompts",
+    "count": 200,
+    "easy": 60,
+    "medium": 80,
+    "hard": 60
+  },
+  {
+    "id": "creative-writing",
+    "name": "Creative Writing",
+    "count": 200,
+    "easy": 60,
+    "medium": 80,
+    "hard": 60
+  },
+  {
+    "id": "diy-crafts-and-projects",
+    "name": "DIY Crafts and Projects",
+    "count": 200,
+    "easy": 60,
+    "medium": 80,
+    "hard": 60
+  },
+  {
+    "id": "phone-lead-generation",
+    "name": "Phone Lead Generation",
+    "count": 200,
+    "easy": 60,
+    "medium": 80,
+    "hard": 60
+  },
+  {
+    "id": "youtube-automation",
+    "name": "Youtube Automation",
+    "count": 200,
+    "easy": 60,
+    "medium": 80,
+    "hard": 60
+  },
+  {
+    "id": "advertising",
+    "name": "Advertising",
+    "count": 189,
+    "easy": 57,
+    "medium": 75,
+    "hard": 57
+  },
+  {
+    "id": "sustainable-living",
+    "name": "Sustainable Living",
+    "count": 182,
+    "easy": 54,
+    "medium": 72,
+    "hard": 56
+  },
+  {
+    "id": "relationship-advice-and-communication-skills",
+    "name": "Relationship advice and communication skills",
+    "count": 175,
+    "easy": 51,
+    "medium": 71,
+    "hard": 53
+  },
+  {
+    "id": "fitness-and-exercise-routines",
+    "name": "Fitness and exercise routines",
+    "count": 170,
+    "easy": 51,
+    "medium": 68,
+    "hard": 51
+  },
+  {
+    "id": "small-business-tips",
+    "name": "Small Business Tips",
+    "count": 138,
+    "easy": 42,
+    "medium": 56,
+    "hard": 40
+  }
+]

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Mutton Hub — Project Documentation</title>
+<style>
+  :root {
+    --primary: #8B0000;
+    --secondary: #d4a017;
+    --bg: #1a1a2e;
+    --card: #16213e;
+    --text: #eee;
+    --muted: #999;
+    --border: #333;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Calibri, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+  }
+  .container { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+  /* Cover */
+  .cover {
+    text-align: center; padding: 120px 24px 80px;
+    border-bottom: 4px solid var(--secondary);
+    margin-bottom: 40px;
+  }
+  .cover h1 { font-size: 3.2rem; color: var(--primary); letter-spacing: 2px; margin-bottom: 8px; }
+  .cover .tagline { font-size: 1.3rem; color: var(--secondary); margin-bottom: 24px; }
+  .cover .subtitle { font-size: 1.1rem; color: var(--muted); }
+  .cover .meta { margin-top: 32px; font-size: 0.92rem; color: var(--muted); }
+  .cover .meta strong { color: var(--text); }
+  .guiding-key-badge {
+    display: inline-block; margin-top: 20px; padding: 8px 24px;
+    background: linear-gradient(135deg, var(--primary), #c0392b);
+    color: #fff; border-radius: 6px; font-weight: 600; font-size: 0.95rem;
+  }
+  /* TOC */
+  .toc { background: var(--card); border-radius: 10px; padding: 28px 32px; margin-bottom: 40px; border: 1px solid var(--border); }
+  .toc h2 { color: var(--secondary); margin-bottom: 16px; font-size: 1.3rem; }
+  .toc ol { padding-left: 24px; }
+  .toc li { padding: 4px 0; font-size: 0.95rem; }
+  .toc a { color: var(--text); text-decoration: none; transition: color .2s; }
+  .toc a:hover { color: var(--secondary); }
+  /* Sections */
+  .section { margin-bottom: 48px; }
+  .section h2 {
+    font-size: 1.7rem; color: var(--secondary);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px; margin-bottom: 20px;
+  }
+  .section h3 { font-size: 1.2rem; color: var(--text); margin-top: 24px; margin-bottom: 10px; }
+  .section h4 { font-size: 1.05rem; color: var(--muted); margin-top: 18px; margin-bottom: 8px; }
+  .section p { margin-bottom: 12px; font-size: 0.95rem; }
+  .section ul, .section ol { padding-left: 24px; margin-bottom: 14px; }
+  .section li { margin-bottom: 4px; font-size: 0.93rem; }
+  .section hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.88rem; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+  th { background: var(--card); color: var(--secondary); font-weight: 600; }
+  td { color: var(--text); }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  /* Code */
+  .code-block {
+    background: #0d0d1a; border: 1px solid var(--border); border-radius: 6px;
+    padding: 16px 20px; font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.82rem; overflow-x: auto; margin-bottom: 16px; line-height: 1.5;
+  }
+  code { background: #0d0d1a; padding: 2px 6px; border-radius: 3px; font-size: 0.85rem; }
+  /* Info boxes */
+  .info-box {
+    border-left: 4px solid var(--secondary); background: rgba(212,160,23,0.08);
+    padding: 14px 18px; border-radius: 0 6px 6px 0; margin-bottom: 16px;
+    font-size: 0.9rem;
+  }
+  .warn-box {
+    border-left: 4px solid #e74c3c; background: rgba(231,76,60,0.08);
+    padding: 14px 18px; border-radius: 0 6px 6px 0; margin-bottom: 16px;
+    font-size: 0.9rem;
+  }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .badge-primary { background: var(--primary); color: #fff; }
+  .badge-gold { background: var(--secondary); color: #1a1a2e; }
+  /* Footer */
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
+  .footer strong { color: var(--text); }
+  @media print {
+    body { background: #fff; color: #000; }
+    .cover { padding: 60px 24px 40px; }
+    .cover h1 { color: #8B0000; }
+    .cover .tagline { color: #b8860b; }
+    .toc { background: #f5f5f5; border-color: #ddd; }
+    .section h2 { color: #b8860b; border-bottom-color: #ddd; }
+    th { background: #f0f0f0; color: #8B0000; }
+    th, td { border-color: #ccc; }
+    .code-block { background: #f8f8f8; border-color: #ddd; }
+    code { background: #f0f0f0; }
+    .info-box { border-left-color: #b8860b; background: #fef9e7; }
+    .warn-box { border-left-color: #e74c3c; background: #fdedec; }
+    .badge-primary { background: #8B0000; }
+    .badge-gold { background: #b8860b; }
+    .guiding-key-badge { background: #8B0000; }
+    .footer { border-top-color: #ddd; }
+    .section { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+    h2, h3 { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- COVER -->
+<div class="cover">
+  <h1>ROYAL MUTTON HUB</h1>
+  <div class="tagline">Vijayawada-based B2B Mutton Distributor</div>
+  <div class="subtitle">Project Documentation — Full User &amp; Admin Manual</div>
+  <div class="meta">
+    <strong>Client:</strong> Royal Mutton Hub, Vijayawada<br>
+    <strong>Document Generated:</strong> <script>document.write(new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}))</script>
+  </div>
+  <div class="guiding-key-badge">&#9733; Developed by Guiding Key &mdash; http://guidingkey.com</div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#s1">Project Overview</a></li>
+    <li><a href="#s2">Business Information</a></li>
+    <li><a href="#s3">Technology Stack</a></li>
+    <li><a href="#s4">Project Structure</a></li>
+    <li><a href="#s5">Features</a></li>
+    <li><a href="#s6">File Reference</a></li>
+    <li><a href="#s7">Configuration Guide</a></li>
+    <li><a href="#s8">Deployment Guide</a></li>
+    <li><a href="#s9">Admin Dashboard Guide</a></li>
+    <li><a href="#s10">User Manual — Admin Operations</a></li>
+    <li><a href="#s11">localStorage Reference</a></li>
+    <li><a href="#s12">Build Scripts</a></li>
+    <li><a href="#s13">Screenshot Checklist</a></li>
+  </ol>
+</div>
+
+<!-- 1. PROJECT OVERVIEW -->
+<div class="section" id="s1">
+  <h2>1. Project Overview</h2>
+  <p><strong>Royal Mutton Hub</strong> is a fully static, no-backend website for a Vijayawada-based B2B mutton distributor. It serves hotels, restaurants, caterers, mess, and retail chains across Krishna, NTR, and Guntur districts with same-day delivery. The brand emphasizes <strong>fresh, pure, tender mutton</strong> delivered daily with a <em>"No Refrigeration — Only Freshness"</em> USP.</p>
+  <p>The project includes an AI-powered chatbot (via OpenRouter), a rich recipe database (RecipeDB) with chef-credited recipes and user submissions, lead capture, SEO-optimized static pages, a full admin dashboard, anti-bot protections, meeting scheduling, and password management — all running client-side with localStorage-based persistence.</p>
+  <div class="info-box"><strong>Developed by:</strong> <a href="http://guidingkey.com" target="_blank" style="color:#d4a017;">Guiding Key</a> &nbsp;|&nbsp; <strong>Client:</strong> Royal Mutton Hub, Vijayawada</div>
+
+  <h3>Key Differentiators</h3>
+  <ul>
+    <li>No refrigeration — fresh mutton delivered daily</li>
+    <li>Indigenous Vijayawada brand since 2005, rooted in Andhra Pradesh culinary heritage</li>
+    <li>B2B-focused: dedicated service for hotels, restaurants, caterers, mess, retail chains</li>
+    <li>Same-day delivery across Krishna, NTR &amp; Guntur districts</li>
+    <li>All prices in INR for budget-friendly positioning</li>
+  </ul>
+</div>
+
+<!-- 2. BUSINESS INFORMATION -->
+<div class="section" id="s2">
+  <h2>2. Business Information</h2>
+  <table>
+    <tr><th>Field</th><th>Details</th></tr>
+    <tr><td>Business Name</td><td>Royal Mutton Hub</td></tr>
+    <tr><td>Type</td><td>B2B Mutton Distributor</td></tr>
+    <tr><td>Address</td><td># 9-60-75, Ganapathi Rao Road, Kothapeta, Vijayawada - 520001</td></tr>
+    <tr><td>Address (Telugu)</td><td># 9-60-75, గణపతి రావు రోడ్, కొత్తపేట, విజయవాడ - 520001</td></tr>
+    <tr><td>Hours</td><td>Daily 6 AM – 8 PM</td></tr>
+    <tr><td>Service Area</td><td>Krishna, NTR &amp; Guntur Districts</td></tr>
+    <tr><td>Email</td><td>rmhubrj18@gmail.com</td></tr>
+    <tr><td>Delivery</td><td>Same-day delivery</td></tr>
+  </table>
+
+  <h3>B2B Services</h3>
+  <ul>
+    <li><strong>Hotel Supply</strong> — Regular bulk orders for hotel kitchens</li>
+    <li><strong>Restaurant Supply</strong> — Premium cuts for restaurant menus</li>
+    <li><strong>Caterer Supply</strong> — Event-based and volume orders for caterers</li>
+    <li><strong>Mess &amp; Canteen</strong> — Daily supply for mess and canteens</li>
+    <li><strong>Retail Chain</strong> — Quality assured supply for retail stores</li>
+    <li><strong>Bulk Supply</strong> — Wholesale pricing for large volume buyers</li>
+  </ul>
+</div>
+
+<!-- 3. TECHNOLOGY STACK -->
+<div class="section" id="s3">
+  <h2>3. Technology Stack</h2>
+  <table>
+    <tr><th>Component</th><th>Technology</th></tr>
+    <tr><td>Frontend</td><td>Vanilla HTML5, CSS3, JavaScript (ES6+) — no frameworks or build tools</td></tr>
+    <tr><td>Icons</td><td>Font Awesome 6.5.1 (CDN)</td></tr>
+    <tr><td>Typography</td><td>Google Inter Font (CDN)</td></tr>
+    <tr><td>AI Chatbot</td><td>OpenRouter API (configurable model, default: openrouter/free)</td></tr>
+    <tr><td>Encryption</td><td>AES-256-GCM via Web Crypto API (client-side)</td></tr>
+    <tr><td>Maps</td><td>OpenStreetMap embedded</td></tr>
+    <tr><td>Storage</td><td>localStorage (client-side persistence)</td></tr>
+    <tr><td>Deployment</td><td>Netlify (recommended) or Vercel</td></tr>
+    <tr><td>Recipe SEO</td><td>JSON-LD structured data, Open Graph tags, canonical URLs</td></tr>
+  </table>
+</div>
+
+<!-- 4. PROJECT STRUCTURE -->
+<div class="section" id="s4">
+  <h2>4. Project Structure</h2>
+  <div class="code-block">
+C:.
+├── index.html                Main site (8 sections)
+├── recipedb.html             Standalone recipe database page
+├── admin.html                Admin dashboard (9 tabs)
+├── utils.js                  Shared constants, Crypto module, sanitization, helpers
+├── embed.js                  AI chatbot widget (Chat, Quote, Order, Meeting, Policy)
+├── chef-recipes.js           9 chef-credited recipes from 8 Indian chefs
+├── generate-recipes.js       Build script — generates RecipeDB/*.html static pages
+├── fetch-commodity-prices.js Build script — fetches mandi prices from data.gov.in
+├── logo.png                  Brand logo
+├── netlify.toml              Netlify deployment config (CSP, caching, 404)
+├── vercel.json               Vercel deployment config (CSP, caching, 404)
+├── package.json              Project metadata
+├── generate_doc.py           Documentation generator script
+├── RecipeDB/                 Generated static recipe pages (22 files)
+│   ├── index.html            Recipe index with JSON-LD ItemList
+│   ├── classic-mutton-biryani.html
+│   ├── andhra-mutton-curry.html
+│   └── ... (20 more recipe pages)
+  </div>
+</div>
+
+<!-- 5. FEATURES -->
+<div class="section" id="s5">
+  <h2>5. Features</h2>
+
+  <h3>5.1 Main Website (index.html)</h3>
+  <ul>
+    <li><strong>Hero</strong> — Indigenous brand badges, CTA buttons (Enquire / WhatsApp / Call), district badges</li>
+    <li><strong>How We Work</strong> — 5-step B2B process: Enquire, Custom Quote, Order Processing, Fresh Preparation, Same-Day Delivery</li>
+    <li><strong>B2B Supply</strong> — 6 service cards targeting different client segments</li>
+    <li><strong>Why Us</strong> — Indigenous highlight box + 9 benefit cards</li>
+    <li><strong>Testimonials</strong> — 6 client reviews with name, rating, and feedback</li>
+    <li><strong>Recipe Database</strong> — Grid with search, filters (diet, budget, cuisine, meal type, category), submission form, modal with ratings, reviews, sharing</li>
+    <li><strong>Contact</strong> — Bilingual address (English/Telugu), OpenStreetMap, enquiry form</li>
+    <li><strong>Footer</strong> — Indigenous brand tagline, Guiding Key credit, admin link</li>
+  </ul>
+
+  <h3>5.2 AI Chatbot (embed.js)</h3>
+  <ul>
+    <li>OpenRouter API integration with configurable model</li>
+    <li>Canned response fallback when API is unavailable</li>
+    <li>Two persona modes: Sales (default) and Executive</li>
+    <li>Prompt injection detection</li>
+    <li>Lead capture to localStorage</li>
+    <li>Meeting scheduling tab with date/time picker</li>
+    <li>Quote request, Order placement, Policy info tabs</li>
+    <li>Rich message formatting: bold, italic, bullet lists, paragraphs</li>
+    <li>Toast notifications instead of browser alerts</li>
+  </ul>
+
+  <h3>5.3 Recipe Database (RecipeDB/)</h3>
+  <ul>
+    <li>22 static HTML pages (12 seed recipes, 9 chef recipes, 1 index)</li>
+    <li>Per-recipe JSON-LD structured data (Recipe schema) for SEO</li>
+    <li>Open Graph tags, Twitter cards, canonical URLs</li>
+    <li>Chef credit badges with source links</li>
+    <li>Social sharing buttons (WhatsApp, Facebook, X, Telegram, Email, Copy Link)</li>
+    <li>Prev/Next navigation between recipes</li>
+  </ul>
+
+  <h3>5.4 Recipe Features</h3>
+  <ul>
+    <li>Questionnaire form with input sanitization (strip HTML + encode special chars)</li>
+    <li>Rate limiting: max 3 submissions per hour per browser</li>
+    <li>Filters: diet, budget, cuisine, meal type, category</li>
+    <li>Star rating (1-5), "I Cooked This!" counter, text reviews</li>
+    <li>Circular icon-only share buttons with hover effects</li>
+    <li>Emoji-based image placeholders (no hosting needed)</li>
+    <li>Cost estimates in INR with equipment badges</li>
+  </ul>
+
+  <h3>5.5 Admin Dashboard (admin.html)</h3>
+  <table>
+    <tr><th>Tab</th><th>Description</th></tr>
+    <tr><td>Overview</td><td>Stats cards (total recipes, API calls, leads, meetings), recent activity feed</td></tr>
+    <tr><td>API Keys</td><td>Encrypted OpenRouter key storage, show/hide, test validation, model selector, rotate. Saves plaintext to rmh_bot_apikey for chatbot.</td></tr>
+    <tr><td>Password</td><td>Change admin password with validation, display current hash</td></tr>
+    <tr><td>Branding</td><td>Edit name, tagline, address (EN/TE), phone, WhatsApp, email. Mutton cuts CRUD. Custom CSS injection.</td></tr>
+    <tr><td>Theming</td><td>Dark/light toggle, accent color, font, border radius, 5 presets</td></tr>
+    <tr><td>RecipeDB</td><td>View/search, add/edit/delete user &amp; chef recipes, bulk delete, export/import JSON</td></tr>
+    <tr><td>Meetings</td><td>Manage B2B meeting requests: Confirm, Complete, Cancel, Reopen</td></tr>
+    <tr><td>Data Management</td><td>Encrypted backup/restore, local snapshots, CSV/JSON export/import, danger zone</td></tr>
+    <tr><td>API Usage</td><td>Page views, API calls, leads table, API call history</td></tr>
+  </table>
+
+  <h3>5.6 Security Features</h3>
+  <ul>
+    <li>AES-256-GCM encryption for API keys, backups, and sensitive data</li>
+    <li>DevTools detector: dimension delta check every 2s; blanks page if detected</li>
+    <li>Right-click disabled, text selection disabled, copy/cut/drag blocked</li>
+    <li>Keyboard shortcut blocking: Ctrl+C/U/S/P/I/J/Y/A/F/E/H, F12</li>
+    <li>Email obfuscation: address split into JS variables, decoded at runtime</li>
+    <li>Input sanitization on all user-submitted data</li>
+    <li>Rate limiting on recipe submissions (3/hour)</li>
+    <li>CSP headers via meta tag, Netlify TOML, and Vercel JSON</li>
+  </ul>
+</div>
+
+<!-- 6. FILE REFERENCE -->
+<div class="section" id="s6">
+  <h2>6. File Reference</h2>
+
+  <h3>6.1 Script Loading Order</h3>
+  <table>
+    <tr><th>Script</th><th>Attribute</th><th>Purpose</th></tr>
+    <tr><td>chef-recipes.js</td><td>defer</td><td>Chef recipe data (28KB)</td></tr>
+    <tr><td>utils.js</td><td>sync</td><td>BUSINESS constants, crypto, helpers</td></tr>
+    <tr><td>embed.js</td><td>defer</td><td>Chatbot widget</td></tr>
+    <tr><td>inline script</td><td>sync</td><td>DOMContentLoaded initialization</td></tr>
+  </table>
+
+  <h3>6.2 utils.js — Key Exports</h3>
+  <table>
+    <tr><th>Export</th><th>Description</th></tr>
+    <tr><td>BUSINESS.recipes[]</td><td>12 seed recipes with full metadata</td></tr>
+    <tr><td>BUSINESS.services[]</td><td>6 B2B service types</td></tr>
+    <tr><td>BUSINESS.cuts[]</td><td>10 mutton product strings</td></tr>
+    <tr><td>BUSINESS.districts[]</td><td>3 service districts</td></tr>
+    <tr><td>BUSINESS.addressTelugu</td><td>Telugu address string</td></tr>
+    <tr><td>BUSINESS.indigenousNote</td><td>Indigenous brand messaging</td></tr>
+    <tr><td>Crypto.encrypt()</td><td>AES-256-GCM encrypt with password-derived key</td></tr>
+    <tr><td>Crypto.decrypt()</td><td>AES-256-GCM decrypt with password-derived key</td></tr>
+    <tr><td>safeParse()</td><td>Safe JSON.parse with fallback</td></tr>
+    <tr><td>escapeHtml()</td><td>HTML entity encoding</td></tr>
+    <tr><td>sanitizeHtml()</td><td>Strips HTML tags + encodes special chars</td></tr>
+    <tr><td>hash()</td><td>SHA-256 hash via Web Crypto API</td></tr>
+  </table>
+
+  <h3>6.3 embed.js — Chatbot Functions</h3>
+  <table>
+    <tr><th>Function</th><th>Description</th></tr>
+    <tr><td>formatBotMessage()</td><td>Rich formatting for bot messages (bold, italic, lists, paragraphs)</td></tr>
+    <tr><td>embToggle()</td><td>Toggle chatbot open/closed</td></tr>
+    <tr><td>embScroll()</td><td>Auto-scroll chat to bottom</td></tr>
+    <tr><td>embToast()</td><td>Inline toast notification</td></tr>
+    <tr><td>Meeting tab</td><td>Date/time picker, form validation, localStorage save</td></tr>
+    <tr><td>OpenRouter call</td><td>Configurable model, prompt injection detection</td></tr>
+  </table>
+
+  <h3>6.4 chef-recipes.js (C namespace)</h3>
+  <table>
+    <tr><th>Export</th><th>Description</th></tr>
+    <tr><td>C.CHEFS</td><td>8 chef profiles (Sanjeev Kapoor, Ranveer Brar, Kunal Kapur, Tarla Dalal, Nisha Madhulika, VahChef, Hebbar's Kitchen, Swasthi's Recipes)</td></tr>
+    <tr><td>C.CHEF_RECIPES</td><td>9 full recipes with attribution and source URLs</td></tr>
+    <tr><td>C.COMMODITY_PRODUCTS</td><td>14 commodity items with INR default prices</td></tr>
+    <tr><td>C.estimateRecipeCost()</td><td>Heuristic cost estimator based on ingredients</td></tr>
+    <tr><td>C.fetchCommodityPrices()</td><td>Build-time API stub for data.gov.in</td></tr>
+  </table>
+</div>
+
+<!-- 7. CONFIGURATION GUIDE -->
+<div class="section" id="s7">
+  <h2>7. Configuration Guide</h2>
+
+  <h3>7.1 API Key Setup</h3>
+  <ol>
+    <li>Open admin dashboard (<code>/admin.html</code>) in your browser</li>
+    <li>Login with default password: <code>admin123</code></li>
+    <li>Navigate to <strong>API Keys</strong> tab</li>
+    <li>Paste your OpenRouter API key (get one at <a href="https://openrouter.ai/keys" target="_blank">https://openrouter.ai/keys</a>)</li>
+    <li>Click <strong>Save</strong></li>
+    <li>Select a model from the dropdown (e.g., <code>openrouter/free</code>, <code>google/gemini-2.5-pro-exp:free</code>)</li>
+    <li>Click <strong>Test API Key</strong> to verify</li>
+  </ol>
+
+  <h3>7.2 Changing Admin Password</h3>
+  <ol>
+    <li>Go to <strong>Password</strong> tab in admin dashboard</li>
+    <li>Enter current password (default: <code>admin123</code>)</li>
+    <li>Enter new password (minimum 6 characters)</li>
+    <li>Confirm new password</li>
+    <li>Click <strong>Change Password</strong></li>
+    <li>The next login will require the new password</li>
+  </ol>
+
+  <h3>7.3 API Key Storage Chain</h3>
+  <ol>
+    <li>Admin dashboard saves API key as encrypted copy (<code>rmh_admin_apiKey</code>) + plaintext copy (<code>rmh_bot_apikey</code>)</li>
+    <li><code>utils.js</code> (sync, loads before <code>embed.js</code>) reads <code>rmh_bot_apikey</code> and sets <code>window.__RMH.API_KEY</code></li>
+    <li><code>embed.js</code> uses <code>window.__RMH.API_KEY</code> for OpenRouter API calls, with hardcoded fallback</li>
+  </ol>
+
+  <h3>7.4 Theme Configuration</h3>
+  <p>In the <strong>Theming</strong> tab:</p>
+  <ul>
+    <li>Dark/Light mode toggle</li>
+    <li>Accent color picker (default: <code>#d4a017</code> — royal gold)</li>
+    <li>Font selector (from Google Fonts library)</li>
+    <li>Border radius slider (0-30px, default: 14px)</li>
+    <li>5 preset themes: Royal (default), Midnight, Emerald, Ruby, Ocean</li>
+  </ul>
+</div>
+
+<!-- 8. DEPLOYMENT GUIDE -->
+<div class="section" id="s8">
+  <h2>8. Deployment Guide</h2>
+
+  <h3>8.1 Netlify Deployment (Recommended)</h3>
+  <p><strong>Method 1 — Git Import:</strong></p>
+  <ol>
+    <li>Push the project folder to a Git repository (GitHub/GitLab/Bitbucket)</li>
+    <li>Go to <a href="https://app.netlify.com" target="_blank">https://app.netlify.com</a> → Add new site → Import from Git</li>
+    <li>Select the repository → Deploy (no build command needed; publish directory is <code>.</code>)</li>
+  </ol>
+  <p><strong>Method 2 — Drag and Drop:</strong></p>
+  <ol>
+    <li>Go to <a href="https://app.netlify.com" target="_blank">https://app.netlify.com</a> → Sites</li>
+    <li>Drag and drop the entire client folder onto the browser window</li>
+  </ol>
+
+  <h3>8.2 Vercel Deployment</h3>
+  <ol>
+    <li>Push to a Git repository</li>
+    <li>Go to <a href="https://vercel.com" target="_blank">https://vercel.com</a> → Add New → Project</li>
+    <li>Import the repository → Deploy (auto-detects static config from <code>vercel.json</code>)</li>
+    <li>Alternatively: run <code>npx vercel --prod</code> from the project directory</li>
+  </ol>
+
+  <h3>8.3 Post-Deployment Checklist</h3>
+  <ol>
+    <li>Open <code>https://your-site.netlify.app</code> — verify Hero, cards, recipes render correctly</li>
+    <li>Open <code>https://your-site.netlify.app/admin.html</code> — login works (default: admin123)</li>
+    <li>Go to <strong>API Keys</strong> → Paste OpenRouter key → Save → Test</li>
+    <li>Go to <strong>Password</strong> → Change password from default</li>
+    <li>Open chatbot → Type "Schedule Meeting" → Fill form → Submit</li>
+    <li>Go to <strong>Meetings</strong> tab in admin → Verify meeting appears</li>
+    <li>Open a RecipeDB static page — verify it renders with JSON-LD</li>
+    <li>Test on mobile — responsive layout, no false-positive anti-bot triggers</li>
+    <li>Verify CSP headers via browser DevTools or <code>curl</code></li>
+  </ol>
+</div>
+
+<!-- 9. ADMIN DASHBOARD GUIDE -->
+<div class="section" id="s9">
+  <h2>9. Admin Dashboard Guide</h2>
+
+  <h3>9.1 Access</h3>
+  <p>Navigate to <code>/admin.html</code>. Default password: <code>admin123</code>.</p>
+
+  <h3>9.2 Tab Reference</h3>
+
+  <h4>Overview</h4>
+  <p>Displays 4 stat cards: Total Recipes (seed + chef + user), API Calls, Total Leads, Active Meetings. Bottom section shows recent activity log.</p>
+
+  <h4>API Keys</h4>
+  <p>Encrypted storage for OpenRouter API key. Features: Show/Hide toggle, Test API Key validation, Model selector dropdown, Rotate key. Saves plaintext copy to <code>rmh_bot_apikey</code> for the chatbot widget.</p>
+
+  <h4>Password</h4>
+  <p>Change password form with 3 fields: current password, new password, confirm new password. Displays current password hash.</p>
+
+  <h4>Branding</h4>
+  <p>Form to customize: business name, tagline (EN/TE), address (EN/TE), phone, WhatsApp, email. Mutton cuts: add/edit/delete product names. Custom CSS textarea for injecting styles.</p>
+
+  <h4>Theming</h4>
+  <p>Dark/Light mode toggle, accent color picker, font selector (Google Fonts), border radius slider. 5 preset themes with instant preview.</p>
+
+  <h4>RecipeDB</h4>
+  <p>Full CRUD interface for recipes. Search bar, filter by type (all/user/chef). Add new recipe form, edit existing, delete individual, bulk delete user recipes. Export/import JSON.</p>
+
+  <h4>Meetings</h4>
+  <p>Table of B2B meeting requests. Filter by status (all/pending/confirmed/completed/cancelled). Search by name/phone/email. Actions: Confirm, Complete, Cancel, Reopen.</p>
+
+  <h4>Data Management</h4>
+  <p>Encrypted backup export/import. Local snapshots. CSV/JSON export/import for Recipes, Meetings, Leads, Reviews &amp; Ratings. Danger Zone: Clear User Recipes, Reset Analytics, Factory Reset.</p>
+
+  <h4>API Usage</h4>
+  <p>4 stat cards: Total Page Views, API Calls, Total Leads, Avg Views/Day. Leads table with source/date. API Calls history with model and query preview.</p>
+</div>
+
+<!-- 10. USER MANUAL — ADMIN OPERATIONS -->
+<div class="section" id="s10">
+  <h2>10. User Manual — Admin Operations</h2>
+  <p>This section provides step-by-step instructions for all admin operations. The admin dashboard is accessible at <code>/admin.html</code> and requires password authentication.</p>
+
+  <h3>10.1 Logging In</h3>
+  <ol>
+    <li>Navigate to <code>https://your-site.com/admin.html</code> in your browser</li>
+    <li>Enter your admin password (default: <code>admin123</code>)</li>
+    <li>Click <strong>Unlock Dashboard</strong></li>
+    <li>On first login, change the default password immediately via the <strong>Password</strong> tab</li>
+  </ol>
+
+  <h3>10.2 Managing API Key</h3>
+  <ol>
+    <li>After logging in, click <strong>API Keys</strong> in the sidebar</li>
+    <li>Paste your OpenRouter API key into the <strong>API Key</strong> field</li>
+    <li>(Optional) Select a different AI model from the dropdown</li>
+    <li>Click <strong>Save API Key</strong> — a success toast will confirm</li>
+    <li>Click <strong>Test API Key</strong> to verify the key works</li>
+    <li>Use the eye icon to toggle key visibility</li>
+    <li>To rotate: click <strong>Rotate</strong>, confirm, then enter a new key</li>
+  </ol>
+
+  <h3>10.3 Changing Password</h3>
+  <ol>
+    <li>Click <strong>Password</strong> in the sidebar</li>
+    <li>Enter your current password</li>
+    <li>Enter your new password (minimum 6 characters)</li>
+    <li>Re-enter the new password to confirm</li>
+    <li>Click <strong>Change Password</strong></li>
+    <li>A success toast confirms the change</li>
+    <li>The current password hash is displayed for reference</li>
+  </ol>
+
+  <h3>10.4 Customizing Branding</h3>
+  <ol>
+    <li>Click <strong>Branding</strong> in the sidebar</li>
+    <li>Edit any field: Business Name, Tagline (English), Tagline (Telugu), Address (English), Address (Telugu), Phone, WhatsApp, Email</li>
+    <li>Each field auto-saves when you type (debounced)</li>
+    <li><strong>Mutton Cuts:</strong> type a cut name and click <strong>Add Cut</strong> to add; click the X icon next to a cut to remove it</li>
+    <li><strong>Custom CSS:</strong> write CSS rules in the textarea — applied site-wide</li>
+    <li>Changes reflect immediately on the dashboard</li>
+  </ol>
+
+  <h3>10.5 Applying Themes</h3>
+  <ol>
+    <li>Click <strong>Theming</strong> in the sidebar</li>
+    <li>Toggle Dark/Light mode using the switch</li>
+    <li>Pick an accent color using the color picker</li>
+    <li>Select a font from the dropdown (loaded from Google Fonts)</li>
+    <li>Adjust border radius using the slider (0-30px)</li>
+    <li>Or click one of the 5 preset theme buttons for instant styling</li>
+    <li>All changes preview in real-time</li>
+  </ol>
+
+  <h3>10.6 Managing Recipes (RecipeDB CRUD)</h3>
+
+  <h4>Viewing &amp; Searching</h4>
+  <ol>
+    <li>Click <strong>RecipeDB</strong> in the sidebar</li>
+    <li>All recipes are displayed in a table with columns: Name, Author, Type (seed/chef/user), Diet, Cuisine</li>
+    <li>Use the search bar to filter by name, author, or cuisine</li>
+    <li>Use the dropdown to filter by type: All, User Recipes, or Chef Recipes</li>
+  </ol>
+
+  <h4>Adding a Recipe</h4>
+  <ol>
+    <li>Click <strong>Add Recipe</strong> button above the table</li>
+    <li>Fill in the recipe form: name, author, category, cuisine, meal type, diet, budget, cost estimate, difficulty, prep time, cook time, servings, image (emoji), dietary restrictions</li>
+    <li>Enter ingredients (one per line)</li>
+    <li>Enter steps (one per line)</li>
+    <li>Enter tips (one per line)</li>
+    <li>Enter equipment (comma-separated)</li>
+    <li>Click <strong>Save</strong> to add the recipe</li>
+  </ol>
+
+  <h4>Editing a Recipe</h4>
+  <ol>
+    <li>Find the recipe in the table</li>
+    <li>Click the edit (pencil) icon in the Actions column</li>
+    <li>Modify any fields in the form that appears</li>
+    <li>Click <strong>Save Changes</strong></li>
+    <li><em>Note:</em> Chef recipes are view-only and cannot be edited</li>
+  </ol>
+
+  <h4>Deleting a Recipe</h4>
+  <ol>
+    <li>Click the delete (trash) icon next to a recipe</li>
+    <li>Confirm the deletion in the dialog</li>
+    <li>Only user recipes can be deleted individually</li>
+    <li>To delete all user recipes: use <strong>Clear User Recipes</strong> in Data Management → Danger Zone</li>
+  </ol>
+
+  <h3>10.7 Managing Meetings</h3>
+  <ol>
+    <li>Click <strong>Meetings</strong> in the sidebar</li>
+    <li>All meeting requests appear in a table with: Name, Phone, Email, Date, Time, Notes, Status, Actions</li>
+    <li>Use the search bar to find by name, phone, or email</li>
+    <li>Use the status filter dropdown to view: All, Pending, Confirmed, Completed, Cancelled</li>
+    <li><strong>Actions per meeting:</strong></li>
+  </ol>
+  <ul>
+    <li>Green checkmark → Confirm (moves from pending to confirmed)</li>
+    <li>Double checkmark → Complete (moves from confirmed to completed)</li>
+    <li>Red X → Cancel (cancels the meeting)</li>
+    <li>Undo arrow → Reopen (moves from cancelled back to pending)</li>
+  </ul>
+  <p><strong>Status Flow:</strong> pending → confirmed → completed (happy path) | pending/confirmed → cancelled (rejection) | cancelled → pending (reopen)</p>
+
+  <h3>10.8 Data Management</h3>
+
+  <h4>Encrypted Backup</h4>
+  <ol>
+    <li>Click <strong>Data Management</strong> in the sidebar</li>
+    <li>Under <strong>Export All Data</strong>, enter your admin password</li>
+    <li>Click <strong>Export Encrypted Backup</strong> — downloads a .rmhbak file</li>
+    <li>To restore: select the .rmhbak file, enter the same password used during export</li>
+    <li>Click <strong>Import &amp; Restore</strong> — all data is restored. Reload the page.</li>
+  </ol>
+
+  <h4>Local Snapshots</h4>
+  <ol>
+    <li>Click <strong>Snapshot Now</strong> to save a plain JSON summary (no API key)</li>
+    <li>Last 5 snapshots appear below the button with timestamp and summary</li>
+    <li>Maximum 20 snapshots retained (oldest auto-removed)</li>
+  </ol>
+
+  <h4>Export / Import CSV &amp; JSON</h4>
+  <p>Located in the <strong>Export / Import (CSV &amp; JSON)</strong> card below the main data management grid.</p>
+  <p><strong>Exporting:</strong></p>
+  <ul>
+    <li><strong>Recipes:</strong> Click JSON or CSV — downloads all user recipes</li>
+    <li><strong>Meetings:</strong> Click JSON or CSV — downloads all meeting requests</li>
+    <li><strong>Leads:</strong> Click JSON or CSV — downloads all captured leads</li>
+    <li><strong>Reviews &amp; Ratings:</strong> Click JSON for text reviews, Ratings for appreciation data</li>
+  </ul>
+  <p><strong>Importing (Recipes &amp; Meetings):</strong></p>
+  <ul>
+    <li>Click the JSON or CSV button under Import for the data type</li>
+    <li>Select the file from your computer</li>
+    <li>Data is appended to existing records (no duplicates removed)</li>
+    <li>A toast confirms how many records were imported</li>
+    <li><em>CSV format:</em> first row must be headers matching field names. Arrays (ingredients, steps, etc.) use semicolons as separators.</li>
+  </ul>
+
+  <div class="warn-box"><strong>Danger Zone —</strong> These actions cannot be undone:<br>
+  - <strong>Clear User Recipes</strong> — deletes all user-submitted recipes (seed &amp; chef preserved)<br>
+  - <strong>Reset Analytics</strong> — clears all page views, API calls, and lead data<br>
+  - <strong>Factory Reset All Data</strong> — deletes EVERYTHING (passwords, API keys, all recipes, analytics, backups, themes, branding). Page reloads automatically. Two confirmation dialogs protect against accidental use.</div>
+
+  <h3>10.9 Monitoring API Usage</h3>
+  <ol>
+    <li>Click <strong>API Usage</strong> in the sidebar</li>
+    <li>Four stat cards show: Total Page Views, API Calls, Total Leads, Avg Views/Day</li>
+    <li>Leads table: Name, Source (chatbot/form with color-coded badge), Date, Recipe</li>
+    <li>API Calls table: Date, Model name, Query preview (first 80 characters)</li>
+  </ol>
+
+  <h3>10.10 Chatbot Operations (User-Facing)</h3>
+  <p>The chatbot is visible on the main site (bottom-right widget). Users can:</p>
+  <ul>
+    <li><strong>Chat Tab</strong> — Ask questions about mutton supply, pricing, recipes. AI-powered with canned fallback.</li>
+    <li><strong>Quote Tab</strong> — Request a B2B quote: name, phone, email, quantity, notes.</li>
+    <li><strong>Order Tab</strong> — Place an order: name, phone, email, cut selection, quantity, delivery date.</li>
+    <li><strong>Meeting Tab</strong> — Schedule a B2B consultation: name, phone, email, preferred date, time, notes. Saves to <code>rmh_meetings</code> with pending status.</li>
+    <li><strong>Policy Tab</strong> — View business policies: delivery, payment, quality assurance, cancellation.</li>
+  </ul>
+
+  <h3>10.11 Recipe Features (User-Facing)</h3>
+  <ul>
+    <li>Browse recipes in the grid — filter by search, diet, budget, cuisine, meal type, category</li>
+    <li>Click a recipe card to open the modal with full details</li>
+    <li>Submit a recipe via the <strong>Submit Your Recipe</strong> form — rate-limited to 3/hour</li>
+    <li>Rate recipes (1-5 stars) and mark <strong>I Cooked This!</strong></li>
+    <li>Post text reviews with your name and feedback</li>
+    <li>Share recipes via WhatsApp, Facebook, X, Telegram, Email, Copy Link, or open the full RecipeDB page</li>
+    <li>Filter by dietary restrictions: gluten-free, dairy-free, nut-free, egg-free, vegan</li>
+  </ul>
+</div>
+
+<!-- 11. localStorage REFERENCE -->
+<div class="section" id="s11">
+  <h2>11. localStorage Reference</h2>
+  <p>All data is stored client-side in the browser's localStorage. Key reference:</p>
+  <table>
+    <tr><th>Key</th><th>Purpose</th></tr>
+    <tr><td>rmh_admin_hash</td><td>SHA-256 hash of admin password</td></tr>
+    <tr><td>rmh_admin_apiKey</td><td>OpenRouter API key (AES-256-GCM encrypted)</td></tr>
+    <tr><td>rmh_bot_apikey</td><td>OpenRouter API key (plaintext, for chatbot)</td></tr>
+    <tr><td>rmh_admin_model</td><td>Selected AI model (e.g., openrouter/free)</td></tr>
+    <tr><td>rmh_admin_branding</td><td>Branding overrides (name, tagline, address, etc.)</td></tr>
+    <tr><td>rmh_admin_cuts</td><td>Custom mutton cuts array</td></tr>
+    <tr><td>rmh_admin_theme</td><td>Theme settings (mode, accent, font, radius)</td></tr>
+    <tr><td>rmh_admin_customCss</td><td>Custom CSS rules</td></tr>
+    <tr><td>rmh_admin_backups</td><td>Local backup snapshots array (max 20)</td></tr>
+    <tr><td>rmh_recipes</td><td>User-submitted recipes array</td></tr>
+    <tr><td>rmh_ratelimit</td><td>Rate limiter: recipe_submit timestamps array</td></tr>
+    <tr><td>rmh_appreciation</td><td>Ratings &amp; "I Cooked This" counts per recipe ID</td></tr>
+    <tr><td>rmh_reviews</td><td>User text reviews per recipe ID</td></tr>
+    <tr><td>rmh_meetings</td><td>B2B meeting requests with status tracking</td></tr>
+    <tr><td>rmh_analytics</td><td>Analytics: pageViews[], apiCalls[], leads[]</td></tr>
+  </table>
+</div>
+
+<!-- 12. BUILD SCRIPTS -->
+<div class="section" id="s12">
+  <h2>12. Build Scripts</h2>
+
+  <h3>12.1 generate-recipes.js</h3>
+  <p>Parses both <code>utils.js</code> (BUSINESS.recipes) and <code>chef-recipes.js</code> (C.CHEF_RECIPES) arrays, then generates 22 static HTML files in the <code>RecipeDB/</code> folder with per-recipe JSON-LD, Open Graph tags, chef badges, share buttons, and prev/next navigation.</p>
+  <div class="code-block">node generate-recipes.js</div>
+  <p><em>Must be re-run after any recipe changes (add/edit/delete).</em></p>
+
+  <h3>12.2 fetch-commodity-prices.js</h3>
+  <p>Node.js build script that fetches live mandi prices from the data.gov.in API. Includes 14 commodity defaults in INR as fallback.</p>
+  <div class="code-block">node fetch-commodity-prices.js --output prices.json</div>
+
+  <h3>12.3 generate_doc.py</h3>
+  <p>Python script that generates the Word documentation file. Requires <code>python-docx</code>.</p>
+  <div class="code-block">pip install python-docx<br>python generate_doc.py</div>
+</div>
+
+<!-- 13. SCREENSHOT CHECKLIST -->
+<div class="section" id="s13">
+  <h2>13. Screenshot Checklist</h2>
+  <p>Capture the following screenshots for documentation or client review:</p>
+
+  <h3>13.1 Main Site (index.html)</h3>
+  <table>
+    <tr><th>#</th><th>Section</th><th>Description</th></tr>
+    <tr><td>1</td><td>Hero</td><td>Brand badges, CTA buttons, district badges at top</td></tr>
+    <tr><td>2</td><td>How We Work</td><td>5-step process cards</td></tr>
+    <tr><td>3</td><td>B2B Supply</td><td>6 service cards for different client segments</td></tr>
+    <tr><td>4</td><td>Why Us</td><td>Indigenous highlight + 9 benefit cards</td></tr>
+    <tr><td>5</td><td>Testimonials</td><td>6 client reviews with ratings</td></tr>
+    <tr><td>6</td><td>Recipe Grid</td><td>Recipe cards with filters and search bar</td></tr>
+    <tr><td>7</td><td>Recipe Modal</td><td>Full recipe view with ingredients, instructions, equipment, rating, reviews, share buttons</td></tr>
+    <tr><td>8</td><td>Contact</td><td>Bilingual address, OpenStreetMap, enquiry form</td></tr>
+    <tr><td>9</td><td>Chatbot</td><td>AI chatbot open with message interaction</td></tr>
+    <tr><td>10</td><td>Meeting Form</td><td>Meeting scheduling tab in chatbot</td></tr>
+  </table>
+
+  <h3>13.2 RecipeDB (recipedb.html)</h3>
+  <table>
+    <tr><th>#</th><th>Section</th><th>Description</th></tr>
+    <tr><td>11</td><td>Recipe List</td><td>Full recipe grid with all filters</td></tr>
+    <tr><td>12</td><td>Recipe Detail</td><td>Static recipe page with JSON-LD structured data</td></tr>
+  </table>
+
+  <h3>13.3 Admin Dashboard (admin.html)</h3>
+  <table>
+    <tr><th>#</th><th>Tab</th><th>Description</th></tr>
+    <tr><td>13</td><td>Login</td><td>Password login screen</td></tr>
+    <tr><td>14</td><td>Overview</td><td>Stats cards and recent activity</td></tr>
+    <tr><td>15</td><td>API Keys</td><td>Encrypted API key management</td></tr>
+    <tr><td>16</td><td>Password</td><td>Change password form</td></tr>
+    <tr><td>17</td><td>Branding</td><td>Business info, cuts, custom CSS</td></tr>
+    <tr><td>18</td><td>Theming</td><td>Dark/light toggle, accent color, font, radius, presets</td></tr>
+    <tr><td>19</td><td>RecipeDB</td><td>Recipe CRUD table with search</td></tr>
+    <tr><td>20</td><td>Meetings</td><td>Meeting requests table with status actions</td></tr>
+    <tr><td>21</td><td>Data Management</td><td>Backup/restore, CSV/JSON tools, danger zone</td></tr>
+    <tr><td>22</td><td>API Usage</td><td>Analytics stats, leads table, API calls history</td></tr>
+  </table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>Royal Mutton Hub</strong> — Project Documentation<br>
+  <em>Developed by <a href="http://guidingkey.com" target="_blank" style="color:#d4a017;">Guiding Key</a></em><br>
+  Document generated <script>document.write(new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}))</script>
+</div>
+
+</div>
+</body>
+</html>

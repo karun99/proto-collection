@@ -104,11 +104,11 @@ function createSwarmMcpServer(options: { swarmConfig?: Record<string, unknown> }
     }
   );
 
-  mcp.resource('s-ai://swarm/status', 'Swarm Status', 'Current swarm agent statuses', async () => {
+  mcp.resource('Swarm Status', 's-ai://swarm/status', { description: 'Current swarm agent statuses' }, async () => {
     return { contents: [{ uri: 's-ai://swarm/status', text: JSON.stringify(swarm.getStatus(), null, 2), mimeType: 'application/json' }] };
   });
 
-  mcp.resource('s-ai://graph', 'Knowledge Graph', 'The full knowledge graph', async () => {
+  mcp.resource('Knowledge Graph', 's-ai://graph', { description: 'The full knowledge graph' }, async () => {
     return { contents: [{ uri: 's-ai://graph', text: JSON.stringify(graph.graph, null, 2), mimeType: 'application/json' }] };
   });
 

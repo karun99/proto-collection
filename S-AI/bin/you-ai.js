@@ -82,6 +82,11 @@ const HELP = `
     engine list                 List built artifacts
     engine ui                   Open the AI Engine dashboard
 
+  Agent Reach (Internet Channels):
+    reach doctor                Check internet channel statuses (Agent-Reach style)
+    reach channels              List all available internet channels
+    reach read <url>            Read content from a URL using best channel
+
   System:
     status                      Show system status
     help                        Show this help
@@ -162,6 +167,7 @@ async function main() {
     case 'engine': await cmdEngine(subcommand, rest); break;
     case 'research': await cmdResearch(subcommand, rest); break;
     case 'bhashini': await cmdBhashini(subcommand, rest); break;
+    case 'reach': await cmdReach(subcommand, rest); break;
     case 'status': await cmdStatus(); break;
     case 'help': case '--help': case '-h': console.log(HELP); break;
     default: console.error(`Unknown command: ${command}\n\nRun 's-ai help' for usage.`); process.exit(1);
@@ -985,6 +991,54 @@ async function cmdPersona(sub, rest) {
     console.log('    clear                    Remove active persona');
     console.log('    node <type> <title> <content>  Add context node');
     console.log('    profiles                 List saved personas\n');
+  }
+}
+
+async function cmdReach(sub, rest) {
+  if (sub === 'doctor' || sub === 'status' || !sub) {
+    const { doctor, formatReport, doctorToJson } = await import(join(PACKAGE_ROOT, 'dist', 'src', 'reach', 'index.js'));
+    const results = doctor();
+    console.log(formatReport(results));
+    const ok = results.filter(r => r.status.status === 'ok').length;
+    process.exit(ok === results.length ? 0 : 1);
+  } else if (sub === 'channels') {
+    const { getChannels } = await import(join(PACKAGE_ROOT, 'dist', 'src', 'reach', 'index.js'));
+    const channels = getChannels();
+    console.log('\n  Available Internet Channels:\n');
+    for (const ch of channels) {
+      console.log(`  ${ch.name.padEnd(15)} ${ch.description}`);
+      console.log(`  ${' '.repeat(15)} Backends: ${ch.backends.join(', ')}`);
+      console.log(`  ${' '.repeat(15)} Tier: ${ch.tier === 0 ? 'Zero-Config' : ch.tier === 1 ? 'Free Login' : 'Manual Setup'}`);
+      console.log('');
+    }
+  } else if (sub === 'read' && rest[0]) {
+    const { getChannels } = await import(join(PACKAGE_ROOT, 'dist', 'src', 'reach', 'index.js'));
+    const url = rest[0];
+    const channels = getChannels();
+    let handled = false;
+    for (const ch of channels) {
+      if (ch.canHandle && ch.canHandle(url) && ch.read) {
+        try {
+          console.log(`\n  Reading via ${ch.name} (${ch.active_backend || ch.backends[0]})...\n`);
+          const content = await ch.read(url);
+          console.log(content.slice(0, 2000) + (content.length > 2000 ? '\n[... truncated]' : ''));
+          handled = true;
+        } catch (err) {
+          console.error(`  [${ch.name}] Error: ${err.message}`);
+        }
+        break;
+      }
+    }
+    if (!handled) {
+      console.log(`\n  No channel available to read: ${url}`);
+    }
+  } else if (sub === 'read' && !rest[0]) {
+    console.error('Usage: s-ai reach read <url>');
+  } else {
+    console.log('\n  Reach (Agent-Reach Internet Channels) commands:');
+    console.log('    doctor                   Check channel statuses');
+    console.log('    channels                 List all channels');
+    console.log('    read <url>               Read content from URL\n');
   }
 }
 

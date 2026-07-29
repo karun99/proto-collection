@@ -10,6 +10,8 @@ export { NeuralMap, getNeuralMap } from './neural/index.js';
 export type { SAIConfig, ProviderConfig, SwarmConfig, CrawlConfig, McpConfig, NeuralMapConfig } from './config.js';
 export { getBhashiniProvider, BhashiniProvider } from './providers/bhashini.js';
 export { searchArxiv, fetchPaperDetails, buildCitationGraph } from './tools/arxiv.js';
+export { getChannels, getChannel, doctor, formatReport, doctorToJson } from './reach/index.js';
+export type { Channel, ChannelCheck, ReachResult } from './reach/index.js';
 export { getBhashiniTools } from './tools/bhashini-tool.js';
 export type { PersonaProfile, CognitiveTrait, CommunicationStyle, ContextNode as NeuralContextNode } from './neural/index.js';
 export type { BhashiniConfig, BhashiniASRResult, BhashiniTTSResult, BhashiniTranslateResult } from './providers/bhashini.js';

@@ -137,6 +137,43 @@ function createSwarmMcpServer(options: { swarmConfig?: Record<string, unknown> }
     ({ question }) => ({ messages: [{ role: 'user', content: { type: 'text' as const, text: `Analyze this from multiple perspectives with bias reduction: ${question}` } }] })
   );
 
+  mcp.tool('reach_doctor', 'Check all internet channel statuses (Agent-Reach style)', {}, async () => {
+    const { doctor, formatReport } = await import('../reach/index.js');
+    const results = doctor();
+    return { content: [{ type: 'text' as const, text: formatReport(results) }] };
+  });
+
+  mcp.tool('reach_read', 'Read content from a URL using the best available channel (web, YouTube, GitHub, Twitter, Reddit, Bilibili)',
+    { url: z.string().describe('The URL to read') },
+    async ({ url }) => {
+      const { getChannels } = await import('../reach/index.js');
+      const channels = getChannels();
+      for (const ch of channels) {
+        if (ch.canHandle && ch.canHandle(url) && ch.read) {
+          try {
+            const content = await ch.read(url);
+            return { content: [{ type: 'text' as const, text: content }] };
+          } catch (err: any) {
+            return { content: [{ type: 'text' as const, text: `[${ch.name}] Read failed: ${err.message}` }] };
+          }
+        }
+      }
+      return { content: [{ type: 'text' as const, text: `No channel available to read: ${url}` }] };
+    }
+  );
+
+  mcp.tool('reach_channels', 'List all available internet channels and their backends', {}, async () => {
+    const { getChannels } = await import('../reach/index.js');
+    const channels = getChannels();
+    const list = channels.map(c => ({
+      name: c.name,
+      description: c.description,
+      backends: c.backends,
+      tier: c.tier,
+    }));
+    return { content: [{ type: 'text' as const, text: JSON.stringify(list, null, 2) }] };
+  });
+
   return mcp;
 }
 
